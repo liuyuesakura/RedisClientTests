@@ -1,0 +1,34 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <DockerPublishDir>$(MSBuildThisFileDirectory)../docker/publish/stackexchange</DockerPublishDir>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Polly" Version="8.6.6" />
+        <PackageReference Include="StackExchange.Redis">
+          <Version>2.12.8</Version>
+        </PackageReference>
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Update="appsettings.json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="..\docker\Dockerfile.stackexchange">
+        <Link>Dockerfile.stackexchange</Link>
+      </Content>
+    </ItemGroup>
+
+    <Target Name="PublishToDocker" AfterTargets="Build" Condition="'$(PublishToDocker)' != 'false'">
+        <Exec Command="dotnet publish &quot;$(MSBuildProjectFullPath)&quot; --no-build -c $(Configuration) -o &quot;$(DockerPublishDir)&quot;" />
+    </Target>
+
+</Project>

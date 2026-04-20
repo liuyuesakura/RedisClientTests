@@ -1,0 +1,295 @@
+# Redis Cluster：6 节点（3 主 + 3 从），无 Sentinel。
+# 每个服务设置 hostname 与 cluster-announce-hostname 一致，避免 CLUSTER 握手失败。
+# 首次由 redis-cluster-init 执行 redis-cli --cluster create；重建集群：docker compose down -v 后再 up。
+# 哨兵版副本：docker-compose-redis-cluster.sentinel.yml
+services:
+  redis-cluster-1:
+    image: redis:8-alpine
+    container_name: redis-cluster-1
+    hostname: redis-cluster-1
+    command:
+      - redis-server
+      - --cluster-enabled
+      - "yes"
+      - --cluster-config-file
+      - nodes.conf
+      - --cluster-node-timeout
+      - "5000"
+      - --appendonly
+      - "yes"
+      - --cluster-announce-hostname
+      - redis-cluster-1
+      - --cluster-announce-port
+      - "6379"
+      - --cluster-announce-bus-port
+      - "16379"
+    ports:
+      - "6379:6379"
+      - "16379:16379"
+    networks:
+      - redis-cluster-net
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 2s
+      timeout: 3s
+      retries: 25
+      start_period: 8s
+
+  redis-cluster-2:
+    image: redis:8-alpine
+    container_name: redis-cluster-2
+    hostname: redis-cluster-2
+    command:
+      - redis-server
+      - --cluster-enabled
+      - "yes"
+      - --cluster-config-file
+      - nodes.conf
+      - --cluster-node-timeout
+      - "5000"
+      - --appendonly
+      - "yes"
+      - --cluster-announce-hostname
+      - redis-cluster-2
+      - --cluster-announce-port
+      - "6379"
+      - --cluster-announce-bus-port
+      - "16379"
+    ports:
+      - "6380:6379"
+      - "16380:16379"
+    networks:
+      - redis-cluster-net
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 2s
+      timeout: 3s
+      retries: 25
+      start_period: 8s
+
+  redis-cluster-3:
+    image: redis:8-alpine
+    container_name: redis-cluster-3
+    hostname: redis-cluster-3
+    command:
+      - redis-server
+      - --cluster-enabled
+      - "yes"
+      - --cluster-config-file
+      - nodes.conf
+      - --cluster-node-timeout
+      - "5000"
+      - --appendonly
+      - "yes"
+      - --cluster-announce-hostname
+      - redis-cluster-3
+      - --cluster-announce-port
+      - "6379"
+      - --cluster-announce-bus-port
+      - "16379"
+    ports:
+      - "6381:6379"
+      - "16381:16379"
+    networks:
+      - redis-cluster-net
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 2s
+      timeout: 3s
+      retries: 25
+      start_period: 8s
+
+  redis-cluster-4:
+    image: redis:8-alpine
+    container_name: redis-cluster-4
+    hostname: redis-cluster-4
+    command:
+      - redis-server
+      - --cluster-enabled
+      - "yes"
+      - --cluster-config-file
+      - nodes.conf
+      - --cluster-node-timeout
+      - "5000"
+      - --appendonly
+      - "yes"
+      - --cluster-announce-hostname
+      - redis-cluster-4
+      - --cluster-announce-port
+      - "6379"
+      - --cluster-announce-bus-port
+      - "16379"
+    ports:
+      - "6382:6379"
+      - "16382:16379"
+    networks:
+      - redis-cluster-net
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 2s
+      timeout: 3s
+      retries: 25
+      start_period: 8s
+
+  redis-cluster-5:
+    image: redis:8-alpine
+    container_name: redis-cluster-5
+    hostname: redis-cluster-5
+    command:
+      - redis-server
+      - --cluster-enabled
+      - "yes"
+      - --cluster-config-file
+      - nodes.conf
+      - --cluster-node-timeout
+      - "5000"
+      - --appendonly
+      - "yes"
+      - --cluster-announce-hostname
+      - redis-cluster-5
+      - --cluster-announce-port
+      - "6379"
+      - --cluster-announce-bus-port
+      - "16379"
+    ports:
+      - "6383:6379"
+      - "16383:16379"
+    networks:
+      - redis-cluster-net
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 2s
+      timeout: 3s
+      retries: 25
+      start_period: 8s
+
+  redis-cluster-6:
+    image: redis:8-alpine
+    container_name: redis-cluster-6
+    hostname: redis-cluster-6
+    command:
+      - redis-server
+      - --cluster-enabled
+      - "yes"
+      - --cluster-config-file
+      - nodes.conf
+      - --cluster-node-timeout
+      - "5000"
+      - --appendonly
+      - "yes"
+      - --cluster-announce-hostname
+      - redis-cluster-6
+      - --cluster-announce-port
+      - "6379"
+      - --cluster-announce-bus-port
+      - "16379"
+    ports:
+      - "6384:6379"
+      - "16384:16379"
+    networks:
+      - redis-cluster-net
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 2s
+      timeout: 3s
+      retries: 25
+      start_period: 8s
+
+  redis-cluster-init:
+    image: redis:8-alpine
+    container_name: redis-cluster-init
+    networks:
+      - redis-cluster-net
+    depends_on:
+      redis-cluster-1:
+        condition: service_healthy
+      redis-cluster-2:
+        condition: service_healthy
+      redis-cluster-3:
+        condition: service_healthy
+      redis-cluster-4:
+        condition: service_healthy
+      redis-cluster-5:
+        condition: service_healthy
+      redis-cluster-6:
+        condition: service_healthy
+    restart: "no"
+    command:
+      - sh
+      - -c
+      - |
+        set -e
+        echo '[redis-cluster-init] Waiting for nodes to accept CLUSTER commands...'
+        sleep 2
+        if redis-cli -h redis-cluster-1 -p 6379 CLUSTER INFO 2>/dev/null | grep -q 'cluster_state:ok'; then
+          echo '[redis-cluster-init] cluster_state already ok, skipping create.'
+          redis-cli -h redis-cluster-1 -p 6379 CLUSTER INFO | head -5
+          exit 0
+        fi
+        echo '[redis-cluster-init] Creating cluster (3 masters, 3 replicas)...'
+        redis-cli --cluster create \
+          redis-cluster-1:6379 redis-cluster-2:6379 redis-cluster-3:6379 \
+          redis-cluster-4:6379 redis-cluster-5:6379 redis-cluster-6:6379 \
+          --cluster-replicas 1 --cluster-yes
+        echo '[redis-cluster-init] Verifying (poll until cluster_state:ok)...'
+        for i in $$(seq 1 60); do
+          if redis-cli -h redis-cluster-1 -p 6379 CLUSTER INFO 2>/dev/null | grep -q 'cluster_state:ok'; then
+            echo '[redis-cluster-init] cluster_state:ok'
+            redis-cli -h redis-cluster-1 -p 6379 CLUSTER INFO | grep -E 'cluster_state|cluster_slots_assigned|cluster_known_nodes'
+            exit 0
+          fi
+          sleep 1
+        done
+        echo '[redis-cluster-init] ERROR: cluster_state not ok within 60s'
+        redis-cli -h redis-cluster-1 -p 6379 CLUSTER INFO
+        exit 1
+
+  app:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.stackexchange
+    image: stackexchange-tests-app:local
+    container_name: stackexchange-tests-app
+    depends_on:
+      redis-cluster-init:
+        condition: service_completed_successfully
+    working_dir: /app
+    command: ["dotnet", "StackExchangeTests.dll"]
+    networks:
+      - redis-cluster-net
+
+  csredis-tests-app:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.csredis
+    image: csredis-tests-app:local
+    container_name: csredis-tests-app
+    depends_on:
+      redis-cluster-init:
+        condition: service_completed_successfully
+    working_dir: /app
+    tty: true
+    stdin_open: true
+    command: ["dotnet", "CsredisTests.dll"]
+    networks:
+      - redis-cluster-net
+
+  freeredis-tests-app:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.freeredis
+    image: freeredis-tests-app:local
+    container_name: freeredis-tests-app
+    depends_on:
+      redis-cluster-init:
+        condition: service_completed_successfully
+    working_dir: /app
+    tty: true
+    stdin_open: true
+    command: ["dotnet", "FreeRedisTests.dll"]
+    networks:
+      - redis-cluster-net
+
+networks:
+  redis-cluster-net:
+    driver: bridge

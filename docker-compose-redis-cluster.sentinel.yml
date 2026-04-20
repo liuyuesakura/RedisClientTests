@@ -1,0 +1,130 @@
+# 三组独立的主从复制 + 单个 Sentinel（可同时监控多个主节点）。
+# 若你需要的是 Redis Cluster（16379 集群总线、哈希槽分片），请改用 redis-cli --cluster create 方案，该模式不使用 Sentinel。
+services:
+  redis-master-1:
+    image: redis:8-alpine
+    container_name: redis-master-1
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "6379:6379"
+    networks:
+      - redis-cluster-net
+
+  redis-replica-1:
+    image: redis:8-alpine
+    container_name: redis-replica-1
+    depends_on:
+      - redis-master-1
+    command: ["redis-server", "--replicaof", "redis-master-1", "6379", "--appendonly", "yes"]
+    ports:
+      - "6380:6379"
+    networks:
+      - redis-cluster-net
+
+  redis-master-2:
+    image: redis:8-alpine
+    container_name: redis-master-2
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "6381:6379"
+    networks:
+      - redis-cluster-net
+
+  redis-replica-2:
+    image: redis:8-alpine
+    container_name: redis-replica-2
+    depends_on:
+      - redis-master-2
+    command: ["redis-server", "--replicaof", "redis-master-2", "6379", "--appendonly", "yes"]
+    ports:
+      - "6382:6379"
+    networks:
+      - redis-cluster-net
+
+  redis-master-3:
+    image: redis:8-alpine
+    container_name: redis-master-3
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "6383:6379"
+    networks:
+      - redis-cluster-net
+
+  redis-replica-3:
+    image: redis:8-alpine
+    container_name: redis-replica-3
+    depends_on:
+      - redis-master-3
+    command: ["redis-server", "--replicaof", "redis-master-3", "6379", "--appendonly", "yes"]
+    ports:
+      - "6384:6379"
+    networks:
+      - redis-cluster-net
+
+  redis-sentinel:
+    image: redis:8-alpine
+    container_name: redis-sentinel-cluster
+    depends_on:
+      - redis-master-1
+      - redis-master-2
+      - redis-master-3
+    command:
+      - sh
+      - -c
+      - |
+        cat <<EOF > /tmp/sentinel.conf
+        port 26379
+        dir /tmp
+        sentinel resolve-hostnames yes
+        # 与 StackExchangeTests/appsettings.json 中 SentinelServiceName: mymaster 一致（对应第 1 组主从）
+        sentinel monitor mymaster redis-master-1 6379 1
+        sentinel down-after-milliseconds mymaster 5000
+        sentinel failover-timeout mymaster 10000
+        sentinel parallel-syncs mymaster 1
+        sentinel monitor master2 redis-master-2 6379 1
+        sentinel down-after-milliseconds master2 5000
+        sentinel failover-timeout master2 10000
+        sentinel parallel-syncs master2 1
+        sentinel monitor master3 redis-master-3 6379 1
+        sentinel down-after-milliseconds master3 5000
+        sentinel failover-timeout master3 10000
+        sentinel parallel-syncs master3 1
+        EOF
+        redis-server /tmp/sentinel.conf --sentinel
+    ports:
+      - "26379:26379"
+    networks:
+      - redis-cluster-net
+
+  app:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.stackexchange
+    image: stackexchange-tests-app:local
+    container_name: stackexchange-tests-app
+    depends_on:
+      - redis-sentinel
+    working_dir: /app
+    command: ["dotnet", "StackExchangeTests.dll"]
+    networks:
+      - redis-cluster-net
+
+  csredis-tests-app:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.csredis
+    image: csredis-tests-app:local
+    container_name: csredis-tests-app
+    depends_on:
+      - redis-sentinel
+    working_dir: /app
+    # 无 TTY 时 .NET 控制台输出常被全缓冲，导致 docker logs 长时间看不到；分配伪终端以按行刷新
+    tty: true
+    stdin_open: true
+    command: ["dotnet", "CsredisTests.dll"]
+    networks:
+      - redis-cluster-net
+
+networks:
+  redis-cluster-net:
+    driver: bridge
