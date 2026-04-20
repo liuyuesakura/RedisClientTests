@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using System.Text;
 using CSRedis;
 
 // Docker 无 TTY 时 stdout 常被全缓冲，导致 docker logs 长时间看不到输出；尽早打印并 Flush。
@@ -101,23 +102,12 @@ while (true)
 
 static async Task RunPipelineTestAsync(CsRedisRepository repository)
 {
-    var prefix = $"pipeline:test:{Guid.NewGuid():N}";
-    var values = new Dictionary<string, string>
-    {
-        [$"{prefix}:k1"] = "v1",
-        [$"{prefix}:k2"] = "v2",
-        [$"{prefix}:k3"] = "v3"
-    };
+    var runId = Guid.NewGuid().ToString("N");
+    var sameSlotValues = BuildSameHashtagValues("CsredisTests", runId);
+    var multiSlotValues = BuildMultiHashtagValues("CsredisTests", runId);
 
-    await repository.PipelineSetAsync(values, TimeSpan.FromMinutes(5));
-    var readResult = await repository.PipelineGetStringAsync(values.Keys.ToList());
-
-    Console.WriteLine("[PipelineTest] Start");
-    foreach (var key in values.Keys)
-    {
-        Console.WriteLine($"[PipelineTest] {key} => {readResult[key]}");
-    }
-    Console.WriteLine("[PipelineTest] End");
+    await RunPipelineScenarioAsync(repository, "same-hashtag", sameSlotValues, expectSingleSlot: true);
+    await RunPipelineScenarioAsync(repository, "multi-hashtag", multiSlotValues, expectSingleSlot: false);
 }
 
 static Task RunCacheShellTestAsync()
@@ -162,4 +152,100 @@ static Task RunCacheShellTestAsync()
         $"[CacheShellTest] Hash key/field: first={hashFirst}, second={hashSecond}, factoryInvocations={hashFactoryCalls} (expect 1)");
     Console.WriteLine("[CacheShellTest] End");
     return Task.CompletedTask;
+}
+
+static async Task RunPipelineScenarioAsync(
+    CsRedisRepository repository,
+    string scenarioName,
+    IReadOnlyDictionary<string, string> values,
+    bool expectSingleSlot)
+{
+    var slots = values.Keys.Select(ComputeRedisClusterSlot).ToArray();
+    var distinctSlots = slots.Distinct().OrderBy(x => x).ToArray();
+    var slotExpectationMatched = expectSingleSlot ? distinctSlots.Length == 1 : distinctSlots.Length > 1;
+    if (!slotExpectationMatched)
+    {
+        throw new InvalidOperationException(
+            $"Scenario '{scenarioName}' slot distribution mismatch. Distinct slots: {string.Join(",", distinctSlots)}");
+    }
+
+    await repository.PipelineSetAsync(values, TimeSpan.FromMinutes(5));
+    var readResult = await repository.PipelineGetStringAsync(values.Keys.ToList());
+
+    Console.WriteLine($"[PipelineTest] Scenario={scenarioName}, DistinctSlots={distinctSlots.Length}, Slots=[{string.Join(",", distinctSlots)}]");
+    var slotSummary = string.Join(", ", slots.GroupBy(x => x).OrderBy(g => g.Key).Select(g => $"{g.Key}->{g.Count()}"));
+    Console.WriteLine($"[PipelineTest] SlotSummary={slotSummary}");
+    foreach (var key in values.Keys)
+    {
+        Console.WriteLine($"[PipelineTest] {key} (slot={ComputeRedisClusterSlot(key)}) => {readResult[key]}");
+    }
+}
+
+static Dictionary<string, string> BuildSameHashtagValues(string projectName, string runId)
+{
+    var hashTag = $"{projectName}:{runId}:same";
+    return new Dictionary<string, string>
+    {
+        [$"pipeline:{projectName}:{{{hashTag}}}:k1"] = "v1",
+        [$"pipeline:{projectName}:{{{hashTag}}}:k2"] = "v2",
+        [$"pipeline:{projectName}:{{{hashTag}}}:k3"] = "v3"
+    };
+}
+
+static Dictionary<string, string> BuildMultiHashtagValues(string projectName, string runId)
+{
+    var values = new Dictionary<string, string>(3);
+    var usedSlots = new HashSet<int>();
+    var keyIndex = 1;
+    var salt = 0;
+    while (values.Count < 3)
+    {
+        var hashTag = $"{projectName}:{runId}:multi:{keyIndex}:{salt}";
+        var key = $"pipeline:{projectName}:{{{hashTag}}}:k{keyIndex}";
+        var slot = ComputeRedisClusterSlot(key);
+        if (usedSlots.Add(slot))
+        {
+            values[key] = $"v{keyIndex}";
+            keyIndex++;
+            continue;
+        }
+
+        salt++;
+    }
+
+    return values;
+}
+
+static int ComputeRedisClusterSlot(string key)
+{
+    var hashInput = ExtractHashTagOrKey(key);
+    var bytes = Encoding.UTF8.GetBytes(hashInput);
+    ushort crc = 0;
+    foreach (var b in bytes)
+    {
+        crc ^= (ushort)(b << 8);
+        for (var i = 0; i < 8; i++)
+        {
+            crc = (crc & 0x8000) != 0
+                ? (ushort)((crc << 1) ^ 0x1021)
+                : (ushort)(crc << 1);
+        }
+    }
+
+    return crc % 16384;
+}
+
+static string ExtractHashTagOrKey(string key)
+{
+    var start = key.IndexOf('{');
+    if (start >= 0)
+    {
+        var end = key.IndexOf('}', start + 1);
+        if (end > start + 1)
+        {
+            return key.Substring(start + 1, end - start - 1);
+        }
+    }
+
+    return key;
 }

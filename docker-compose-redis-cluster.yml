@@ -245,9 +245,11 @@ services:
         exit 1
 
   app:
+    pull_policy: build
     build:
       context: .
       dockerfile: docker/Dockerfile.stackexchange
+      no_cache: true
     image: stackexchange-tests-app:local
     container_name: stackexchange-tests-app
     depends_on:
@@ -259,9 +261,11 @@ services:
       - redis-cluster-net
 
   csredis-tests-app:
+    pull_policy: build
     build:
       context: .
       dockerfile: docker/Dockerfile.csredis
+      no_cache: true
     image: csredis-tests-app:local
     container_name: csredis-tests-app
     depends_on:
@@ -275,9 +279,11 @@ services:
       - redis-cluster-net
 
   freeredis-tests-app:
+    pull_policy: build
     build:
       context: .
       dockerfile: docker/Dockerfile.freeredis
+      no_cache: true
     image: freeredis-tests-app:local
     container_name: freeredis-tests-app
     depends_on:
