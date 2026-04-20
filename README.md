@@ -1,5 +1,8 @@
 ﻿# A Test
 
+## 主动缩容
+## pipeline
+
 ## csredis 
 在从节点异常下线时
   FAIL redis (direct)  (【redis-cluster-1:6379/0】Status unavailable, waiting for recovery. Object reference not set to an instance of an object.)
