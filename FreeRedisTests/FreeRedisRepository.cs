@@ -89,20 +89,23 @@ public sealed class FreeRedisRepository
         return Task.Run(() =>
         {
             var redis = _clientFactory();
-            using var pipe = redis.StartPipe();
-            foreach (var pair in values)
+            using (var pipe = redis.StartPipe())
             {
-                if (expiry.HasValue)
+                foreach (var pair in values)
                 {
-                    pipe.Set(pair.Key, pair.Value, (int)expiry.Value.TotalSeconds);
+                    if (expiry.HasValue)
+                    {
+                        pipe.Set(pair.Key, pair.Value, (int)expiry.Value.TotalSeconds);
+                    }
+                    else
+                    {
+                        pipe.Set(pair.Key, pair.Value);
+                    }
                 }
-                else
-                {
-                    pipe.Set(pair.Key, pair.Value);
-                }
+
+                pipe.EndPipe();
             }
 
-            pipe.EndPipe();
         });
     }
 

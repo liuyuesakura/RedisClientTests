@@ -1,5 +1,6 @@
 using CSRedis;
-using StackExchange.Redis;
+
+namespace CsredisTests;
 
 public static class RedisReachableNodesReport
 {
@@ -51,17 +52,19 @@ public static class RedisReachableNodesReport
     {
         try
         {
-            var opts = ConfigurationOptions.Parse($"{host}:{port},connectTimeout=3000,syncTimeout=3000,abortConnect=false");
-            using var mux = ConnectionMultiplexer.Connect(opts);
-            var server = mux.GetServer(host, port);
-            var raw = server.Execute("CLUSTER", "NODES");
-            return raw.IsNull ? null : raw.ToString();
+            using var redis = new CSRedisClient($"{host}:{port},connectTimeout=3000,syncTimeout=3000,abortConnect=false");
+            const string probeKey = "__topology_probe__";
+            const string script = "return redis.call('CLUSTER','NODES')";
+            var raw = redis.Eval(script, probeKey);
+            var text = raw switch
+            {
+                null => null,
+                byte[] bytes => System.Text.Encoding.UTF8.GetString(bytes),
+                _ => raw.ToString()
+            };
+            return string.IsNullOrWhiteSpace(text) ? null : text;
         }
-        catch (RedisServerException)
-        {
-            return null;
-        }
-        catch
+        catch (Exception)
         {
             return null;
         }

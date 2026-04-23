@@ -211,3 +211,12 @@ static string ExtractHashTagOrKey(string key)
 
     return key;
 }
+
+
+// {
+//     "Redis": {
+//         "ConnectionString": "127.0.0.1:6379,127.0.0.1:6380,127.0.0.1:6381,127.0.0.1:6382,127.0.0.1:6383,127.0.0.1:6384,abortConnect=false,connectTimeout=5000",
+//         "InstanceName": "freeredis-tests",
+//         "PoolSize": 4
+//     }
+// }

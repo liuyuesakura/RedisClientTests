@@ -1,5 +1,4 @@
 using FreeRedis;
-using StackExchange.Redis;
 
 public static class RedisReachableNodesReport
 {
@@ -52,15 +51,17 @@ public static class RedisReachableNodesReport
     {
         try
         {
-            var opts = ConfigurationOptions.Parse($"{host}:{port},connectTimeout=3000,syncTimeout=3000,abortConnect=false");
-            using var mux = ConnectionMultiplexer.Connect(opts);
-            var server = mux.GetServer(host, port);
-            var raw = server.Execute("CLUSTER", "NODES");
-            return raw.IsNull ? null : raw.ToString();
-        }
-        catch (StackExchange.Redis.RedisServerException)
-        {
-            return null;
+            using var redis = FreeRedisClusterFactory.Create(
+                $"{host}:{port},connectTimeout=3000,syncTimeout=3000");
+            var packet = new CommandPacket("CLUSTER", "NODES");
+            var raw = redis.Call(packet.FlagReadbytes(true));
+            var text = raw switch
+            {
+                null => null,
+                byte[] bytes => System.Text.Encoding.UTF8.GetString(bytes),
+                _ => raw.ToString()
+            };
+            return string.IsNullOrWhiteSpace(text) ? null : text;
         }
         catch
         {

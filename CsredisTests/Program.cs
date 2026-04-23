@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using System.Text;
 using CSRedis;
+using CsredisTests;
 
 // Docker 无 TTY 时 stdout 常被全缓冲，导致 docker logs 长时间看不到输出；尽早打印并 Flush。
 Console.WriteLine("[CsredisTests] Starting...");
