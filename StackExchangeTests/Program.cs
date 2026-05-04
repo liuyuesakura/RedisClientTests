@@ -15,6 +15,12 @@ var connectionString = redisSection.GetProperty("ConnectionString").GetString();
 var poolSize = redisSection.TryGetProperty("PoolSize", out var poolSizeElement)
     ? poolSizeElement.GetInt32()
     : 4;
+var grpcEnabled = redisSection.TryGetProperty("GrpcEnabled", out var grpcEnabledElement)
+    ? grpcEnabledElement.GetBoolean()
+    : true;
+var grpcPort = redisSection.TryGetProperty("GrpcPort", out var grpcPortElement)
+    ? grpcPortElement.GetInt32()
+    : 50052;
 var sentinelEnabled = redisSection.TryGetProperty("SentinelEnabled", out var sentinelEnabledElement) &&
                       sentinelEnabledElement.GetBoolean();
 var sentinelServiceName = redisSection.TryGetProperty("SentinelServiceName", out var serviceNameElement)
@@ -49,6 +55,17 @@ var options = sentinelEnabled
 using var redisPool = new RedisConnectionPool(options, poolSize);
 var repository = new RedisRepository(redisPool);
 var cacheShell = new CacheShell(repository, redisPool, message => Console.WriteLine($"[CacheShell] {message}"));
+if (grpcEnabled)
+{
+    var runtimeOptions = new StackExchangeGrpcRuntimeOptions
+    {
+        ConnectionString = connectionString ?? string.Empty,
+        SentinelEnabled = sentinelEnabled,
+        SentinelEndpoints = sentinelEndpoints
+    };
+    StackExchangeGrpcHost.Start(repository, cacheShell, runtimeOptions, grpcPort);
+    Console.WriteLine($"[StackExchangeTests] gRPC server listening on 0.0.0.0:{grpcPort} (service: RedisGetTest/*).");
+}
 // using var sentinelManager = sentinelEnabled
 //     ? CreateSentinelManager(redisPool, sentinelServiceName, sentinelEndpoints)
 //     : null;

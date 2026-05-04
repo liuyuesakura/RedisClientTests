@@ -72,8 +72,8 @@ Console.Out.Flush();
 var repository = new CsRedisRepository(redisPool);
 if (grpcEnabled)
 {
-    CsRedisGrpcHost.Start(repository, grpcPort);
-    Console.WriteLine($"[CsredisTests] gRPC server listening on 0.0.0.0:{grpcPort} (service: RedisGetTest/TriggerGet).");
+    CsRedisGrpcHost.Start(repository, connectionString!, grpcPort);
+    Console.WriteLine($"[CsredisTests] gRPC server listening on 0.0.0.0:{grpcPort} (service: RedisGetTest/*).");
     Console.Out.Flush();
 }
 // using var sentinelManager = sentinelEnabled

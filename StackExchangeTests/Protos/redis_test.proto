@@ -1,8 +1,8 @@
 syntax = "proto3";
 
-option csharp_namespace = "CsredisTests.Grpc";
+option csharp_namespace = "StackExchangeTests.Grpc";
 
-package csredis.tests;
+package stackexchange.tests;
 
 service RedisGetTest {
   rpc TriggerGet (TriggerGetRequest) returns (TriggerGetReply);

@@ -9,6 +9,11 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="Grpc.AspNetCore" Version="2.80.0" />
+        <PackageReference Include="Grpc.Tools" Version="2.80.0">
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+          <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
         <PackageReference Include="Polly" Version="8.6.6" />
         <PackageReference Include="StackExchange.Redis">
           <Version>2.12.8</Version>
@@ -25,6 +30,10 @@
       <Content Include="..\docker\Dockerfile.stackexchange">
         <Link>Dockerfile.stackexchange</Link>
       </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Protobuf Include="Protos/redis_test.proto" GrpcServices="Server" />
     </ItemGroup>
 
     <Target Name="PublishToDocker" AfterTargets="Build" Condition="'$(PublishToDocker)' != 'false'">

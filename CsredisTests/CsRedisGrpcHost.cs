@@ -7,7 +7,7 @@ namespace CsredisTests;
 
 internal static class CsRedisGrpcHost
 {
-    public static WebApplication Start(CsRedisRepository repository, int port)
+    public static WebApplication Start(CsRedisRepository repository, string connectionString, int port)
     {
         var builder = WebApplication.CreateSlimBuilder();
         builder.WebHost.ConfigureKestrel(options =>
@@ -16,6 +16,7 @@ internal static class CsRedisGrpcHost
         });
 
         builder.Services.AddSingleton(repository);
+        builder.Services.AddSingleton(connectionString);
         builder.Services.AddGrpc();
 
         var app = builder.Build();

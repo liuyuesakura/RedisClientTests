@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <Protobuf Include="../CsredisTests/Protos/redis_get_test.proto" GrpcServices="Client" Link="Protos/redis_get_test.proto" />
+    <Protobuf Include="../StackExchangeTests/Protos/redis_test.proto" GrpcServices="Client" Link="Protos/stackexchange_redis_test.proto" />
   </ItemGroup>
 
   <ItemGroup>

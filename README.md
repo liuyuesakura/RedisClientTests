@@ -203,3 +203,23 @@ docker exec -it redis-cluster-1 redis-cli --cluster reshard redis-cluster-1:6379
   https://zhuanlan.zhihu.com/p/145186839
   
   https://bbs.huaweicloud.com/blogs/344366
+
+## grpc phased stress
+
+Use the phased stress script for:
+- warmup
+- per-method baseline (get/pipeline/cacheshell/slot/node)
+- mixed traffic
+- summary export
+
+Run for csredis service:
+
+`powershell -ExecutionPolicy Bypass -File .\run-grpc-phased-stress.ps1 -Suite csredis -Target http://127.0.0.1:50051`
+
+Run for stackexchange service:
+
+`powershell -ExecutionPolicy Bypass -File .\run-grpc-phased-stress.ps1 -Suite stackexchange -Target http://127.0.0.1:50052`
+
+Dry run (print commands only):
+
+`powershell -ExecutionPolicy Bypass -File .\run-grpc-phased-stress.ps1 -DryRun`
