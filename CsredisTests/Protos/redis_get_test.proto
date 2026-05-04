@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+option csharp_namespace = "CsredisTests.Grpc";
+
+package csredis.tests;
+
+service RedisGetTest {
+  rpc TriggerGet (TriggerGetRequest) returns (TriggerGetReply);
+}
+
+message TriggerGetRequest {
+  string key = 1;
+}
+
+message TriggerGetReply {
+  bool found = 1;
+  string value = 2;
+  string message = 3;
+}

@@ -14,6 +14,8 @@ public sealed class CsRedisRepository
         _clientFactory = () => pool.Client;
     }
 
+    public string? GetString(string key) => _clientFactory().Get(key);
+
     public Task PipelineSetAsync(IReadOnlyDictionary<string, string> values, TimeSpan? expiry = null)
     {
         if (values.Count == 0)

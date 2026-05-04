@@ -260,6 +260,30 @@ services:
     networks:
       - redis-cluster-net
 
+  stackexchange-stress-tests:
+    pull_policy: build
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.stackexchange-stress
+      no_cache: true
+    image: stackexchange-stress-tests:local
+    container_name: stackexchange-stress-tests
+    depends_on:
+      redis-cluster-init:
+        condition: service_completed_successfully
+      app:
+        condition: service_started
+    working_dir: /app
+    restart: "no"
+    entrypoint: ["sh", "-c"]
+    command:
+      - |
+        echo "[SERedisStress] waiting 10s for stackexchange-tests-app stabilization..."
+        sleep 10
+        dotnet StackExchangeStressTests.dll --conn "redis-cluster-1:6379,redis-cluster-2:6379,redis-cluster-3:6379,abortConnect=false,connectTimeout=5000" --total 50000 --concurrency 200 --key-prefix se:stress:compose --key-count 2000
+    networks:
+      - redis-cluster-net
+
   csredis-tests-app:
     pull_policy: build
     build:
@@ -275,24 +299,32 @@ services:
     tty: true
     stdin_open: true
     command: ["dotnet", "CsredisTests.dll"]
+    ports:
+      - "50051:50051"
     networks:
       - redis-cluster-net
 
-  freeredis-tests-app:
+  csredis-grpc-stress-tests:
     pull_policy: build
     build:
       context: .
-      dockerfile: docker/Dockerfile.freeredis
+      dockerfile: docker/Dockerfile.csredis-grpc-stress
       no_cache: true
-    image: freeredis-tests-app:local
-    container_name: freeredis-tests-app
+    image: csredis-grpc-stress-tests:local
+    container_name: csredis-grpc-stress-tests
     depends_on:
       redis-cluster-init:
         condition: service_completed_successfully
+      csredis-tests-app:
+        condition: service_started
     working_dir: /app
-    tty: true
-    stdin_open: true
-    command: ["dotnet", "FreeRedisTests.dll"]
+    restart: "no"
+    entrypoint: ["sh", "-c"]
+    command:
+      - |
+        echo "[GrpcStress] waiting 10s for csredis-tests-app stabilization..."
+        sleep 10
+        dotnet CsredisGrpcStressTests.dll --target http://csredis-tests-app:50051 --total 50000 --concurrency 200 --key-prefix grpc:stress:compose
     networks:
       - redis-cluster-net
 

@@ -26,6 +26,7 @@ public sealed class FreeRedisConnectionPool : IDisposable
         for (var i = 0; i < poolSize; i++)
         {
             _clients[i] = _clientFactory();
+            TryWarmupSlotCache(_clients[i], $"init#{i}");
         }
     }
 
@@ -49,6 +50,7 @@ public sealed class FreeRedisConnectionPool : IDisposable
             for (var i = 0; i < poolSize; i++)
             {
                 newClients[i] = _clientFactory();
+                TryWarmupSlotCache(newClients[i], $"reconnect#{i}");
             }
 
             var old = _clients;
@@ -78,6 +80,21 @@ public sealed class FreeRedisConnectionPool : IDisposable
 
     private static RedisClient CreateClusterClient(string connectionString) =>
         FreeRedisClusterFactory.Create(connectionString);
+
+    private static void TryWarmupSlotCache(RedisClient client, string label)
+    {
+        var result = FreeRedisClusterFactory.WarmupSlotCache(client);
+        if (result.Success)
+        {
+            Console.WriteLine(
+                $"[FreeRedisWarmup] {label} success via {result.Path}, slotCacheCount={result.SlotCacheCount}");
+        }
+        else
+        {
+            Console.WriteLine(
+                $"[FreeRedisWarmup] {label} failed, slotCacheCount={result.SlotCacheCount}, error={result.ErrorMessage}");
+        }
+    }
 
     private void ThrowIfDisposed()
     {

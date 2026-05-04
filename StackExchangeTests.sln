@@ -7,6 +7,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CsredisTests", "CsredisTest
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FreeRedisTests", "FreeRedisTests\FreeRedisTests.csproj", "{B186027A-09FA-4B7A-B189-FA76D50E9FA9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CsredisGrpcStressTests", "CsredisGrpcStressTests\CsredisGrpcStressTests.csproj", "{F93AA9E9-12D9-481D-98E3-CA476CC725DE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StackExchangeStressTests", "StackExchangeStressTests\StackExchangeStressTests.csproj", "{10F49131-5300-4E48-9B60-9B8FD953D615}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,5 +29,13 @@ Global
 		{B186027A-09FA-4B7A-B189-FA76D50E9FA9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B186027A-09FA-4B7A-B189-FA76D50E9FA9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B186027A-09FA-4B7A-B189-FA76D50E9FA9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F93AA9E9-12D9-481D-98E3-CA476CC725DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F93AA9E9-12D9-481D-98E3-CA476CC725DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F93AA9E9-12D9-481D-98E3-CA476CC725DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F93AA9E9-12D9-481D-98E3-CA476CC725DE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{10F49131-5300-4E48-9B60-9B8FD953D615}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{10F49131-5300-4E48-9B60-9B8FD953D615}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{10F49131-5300-4E48-9B60-9B8FD953D615}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{10F49131-5300-4E48-9B60-9B8FD953D615}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

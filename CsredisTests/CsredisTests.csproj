@@ -10,6 +10,11 @@
 
     <ItemGroup>
       <PackageReference Include="CSRedisCore" Version="3.8.807" />
+      <PackageReference Include="Grpc.AspNetCore" Version="2.80.0" />
+      <PackageReference Include="Grpc.Tools" Version="2.80.0">
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        <PrivateAssets>all</PrivateAssets>
+      </PackageReference>
       <PackageReference Include="Polly" Version="8.6.6" />
     </ItemGroup>
 
@@ -23,6 +28,10 @@
       <Content Include="..\docker\Dockerfile.csredis">
         <Link>Dockerfile.csredis</Link>
       </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Protobuf Include="Protos/redis_get_test.proto" GrpcServices="Server" />
     </ItemGroup>
 
     <Target Name="PublishToDocker" AfterTargets="Build" Condition="'$(PublishToDocker)' != 'false'">

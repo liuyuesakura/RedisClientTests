@@ -1,0 +1,34 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <DockerPublishDir>$(MSBuildThisFileDirectory)../docker/publish/csredis-grpc-stress</DockerPublishDir>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Google.Protobuf" Version="3.34.1" />
+    <PackageReference Include="Grpc.Net.Client" Version="2.80.0" />
+    <PackageReference Include="Grpc.Tools" Version="2.80.0">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Protobuf Include="../CsredisTests/Protos/redis_get_test.proto" GrpcServices="Client" Link="Protos/redis_get_test.proto" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="..\docker\Dockerfile.csredis-grpc-stress">
+      <Link>Dockerfile.csredis-grpc-stress</Link>
+    </Content>
+  </ItemGroup>
+
+  <Target Name="PublishToDocker" AfterTargets="Build" Condition="'$(PublishToDocker)' != 'false'">
+    <Exec Command="dotnet publish &quot;$(MSBuildProjectFullPath)&quot; --no-build -c $(Configuration) -o &quot;$(DockerPublishDir)&quot;" />
+  </Target>
+
+</Project>

@@ -20,6 +20,12 @@ var connectionString = redisSection.GetProperty("ConnectionString").GetString();
 var poolSize = redisSection.TryGetProperty("PoolSize", out var poolSizeElement)
     ? poolSizeElement.GetInt32()
     : 4;
+var grpcEnabled = redisSection.TryGetProperty("GrpcEnabled", out var grpcEnabledElement)
+    ? grpcEnabledElement.GetBoolean()
+    : true;
+var grpcPort = redisSection.TryGetProperty("GrpcPort", out var grpcPortElement)
+    ? grpcPortElement.GetInt32()
+    : 50051;
 // --- 哨兵（Sentinel）连接相关：已全部注释，仅使用 ConnectionString 直连 ---
 // var sentinelEnabled = redisSection.TryGetProperty("SentinelEnabled", out var sentinelEnabledElement) &&
 //                       sentinelEnabledElement.GetBoolean();
@@ -64,6 +70,12 @@ Console.WriteLine("[CsredisTests] RedisHelper initialized.");
 Console.Out.Flush();
 
 var repository = new CsRedisRepository(redisPool);
+if (grpcEnabled)
+{
+    CsRedisGrpcHost.Start(repository, grpcPort);
+    Console.WriteLine($"[CsredisTests] gRPC server listening on 0.0.0.0:{grpcPort} (service: RedisGetTest/TriggerGet).");
+    Console.Out.Flush();
+}
 // using var sentinelManager = sentinelEnabled
 //     ? new CsRedisSentinelManager(
 //         sentinelEndpoints,
