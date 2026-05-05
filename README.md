@@ -223,3 +223,43 @@ Run for stackexchange service:
 Dry run (print commands only):
 
 `powershell -ExecutionPolicy Bypass -File .\run-grpc-phased-stress.ps1 -DryRun`
+
+## stackexchange direct phased stress
+
+Use the direct StackExchange stress script for:
+- warmup
+- per-method baseline (get/pipeline/cacheshell/slot/node)
+- mixed traffic
+- summary export
+
+Run with defaults:
+
+`powershell -ExecutionPolicy Bypass -File .\run-stackexchange-phased-stress.ps1`
+
+> Default `-Conn` uses `redis-cluster-*` hostnames (suitable inside Docker network).
+
+Custom connection and output:
+
+`powershell -ExecutionPolicy Bypass -File .\run-stackexchange-phased-stress.ps1 -Conn "127.0.0.1:6379,127.0.0.1:6380,127.0.0.1:6381,abortConnect=false,connectTimeout=5000,syncTimeout=5000" -OutputDir artifacts\stackexchange-stress`
+
+Dry run (print commands only):
+
+`powershell -ExecutionPolicy Bypass -File .\run-stackexchange-phased-stress.ps1 -DryRun`
+
+## unified phased entry
+
+Run gRPC phased + direct StackExchange phased together:
+
+`powershell -ExecutionPolicy Bypass -File .\run-all-phased-stress.ps1 -Mode both`
+
+Run only gRPC phased:
+
+`powershell -ExecutionPolicy Bypass -File .\run-all-phased-stress.ps1 -Mode grpc -GrpcSuite both`
+
+Run only direct StackExchange phased:
+
+`powershell -ExecutionPolicy Bypass -File .\run-all-phased-stress.ps1 -Mode direct`
+
+Dry run:
+
+`powershell -ExecutionPolicy Bypass -File .\run-all-phased-stress.ps1 -Mode both -DryRun`
