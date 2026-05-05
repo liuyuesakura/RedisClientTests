@@ -1,0 +1,8 @@
+﻿"Suite","Phase","Method","Total","Concurrency","Log","Qps","P95","P99","Success","Failed","Status"
+"csredis","warmup","all","20","5","artifacts\chaos-compare\run-verify-real-4fix\node-down\csredis\run-verify-real-4fix\warmup.log","109.59","120.82","138.66","20","0","OK"
+"csredis","baseline-get","get","80","20","artifacts\chaos-compare\run-verify-real-4fix\node-down\csredis\run-verify-real-4fix\baseline-get.log","512.86","137.53","138.77","80","0","OK"
+"csredis","baseline-pipeline","pipeline","80","20","artifacts\chaos-compare\run-verify-real-4fix\node-down\csredis\run-verify-real-4fix\baseline-pipeline.log","264.65","230.28","233.27","80","0","OK"
+"csredis","baseline-cacheshell","cacheshell","80","20","artifacts\chaos-compare\run-verify-real-4fix\node-down\csredis\run-verify-real-4fix\baseline-cacheshell.log","358.30","176.78","178.85","80","0","OK"
+"csredis","baseline-slot","slot","80","20","artifacts\chaos-compare\run-verify-real-4fix\node-down\csredis\run-verify-real-4fix\baseline-slot.log","440.21","168.11","170.09","80","0","OK"
+"csredis","baseline-node","node","100","5","artifacts\chaos-compare\run-verify-real-4fix\node-down\csredis\run-verify-real-4fix\baseline-node.log","41.71","242.26","277.78","100","0","OK"
+"csredis","mixed","all","200","40","artifacts\chaos-compare\run-verify-real-4fix\node-down\csredis\run-verify-real-4fix\mixed.log","12.76","9503.04","13055.96","200","0","OK"

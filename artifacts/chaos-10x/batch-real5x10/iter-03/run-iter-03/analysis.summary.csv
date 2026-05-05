@@ -1,0 +1,7 @@
+﻿"Scenario","Suite","Success","Failed","SuccessRate","MixedQps","MixedP95","MixedP99","WorstMethodP95Ratio","PassSuccessRate","PassP95Ratio","Verdict"
+"failover","csredis","2635","14065","15.78","3507.43","1.01","18.29","1.02","False","True","FAIL"
+"failover","stackexchange","16131","569","96.59","446.88","713.85","1151.75","11.98","False","False","FAIL"
+"node-down","csredis","0","16700","0","3490.42","1.97","26.51","7.16","False","False","FAIL"
+"node-down","stackexchange","12939","3761","77.48","594.78","541.46","761.65","9.36","False","False","FAIL"
+"scale-in","csredis","0","16700","0","3556.13","1.06","12.16","2","False","True","FAIL"
+"scale-in","stackexchange","13000","3700","77.84","586.97","513.83","749.4","9.78","False","False","FAIL"

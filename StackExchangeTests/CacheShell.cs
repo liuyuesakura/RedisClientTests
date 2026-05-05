@@ -29,47 +29,24 @@ public sealed class CacheShell
             return cached;
         }
 
-        var lockKey = $"{key}:lock";
-        var lockToken = Guid.NewGuid().ToString("N");
-        var lockOk = await TryAcquireLockAsync(lockKey, lockToken, lockExpiry ?? TimeSpan.FromSeconds(5));
+        // Distributed lock disabled by request:
+        // var lockKey = $"{key}:lock";
+        // var lockToken = Guid.NewGuid().ToString("N");
+        // var lockOk = await TryAcquireLockAsync(lockKey, lockToken, lockExpiry ?? TimeSpan.FromSeconds(5));
 
-        if (lockOk)
+        var secondRead = await _repository.GetAsync<T>(key);
+        if (secondRead is not null)
         {
-            try
-            {
-                var secondRead = await _repository.GetAsync<T>(key);
-                if (secondRead is not null)
-                {
-                    return secondRead;
-                }
-
-                var data = await dataFactory();
-                if (data is not null)
-                {
-                    await _repository.SetAsync(key, data, expiry);
-                }
-
-                return data;
-            }
-            finally
-            {
-                await ReleaseLockAsync(lockKey, lockToken);
-            }
+            return secondRead;
         }
 
-        var baseDelay = retryDelay ?? DefaultRetryBaseDelay;
-        for (var i = 0; i < retryCount; i++)
+        var data = await dataFactory();
+        if (data is not null)
         {
-            await Task.Delay(ComputeRetryDelay(baseDelay, i));
-            var retried = await _repository.GetAsync<T>(key);
-            if (retried is not null)
-            {
-                return retried;
-            }
+            await _repository.SetAsync(key, data, expiry);
         }
 
-        _logger?.Invoke($"CacheShell fallback to direct data factory for key: {key}");
-        return await dataFactory();
+        return data;
     }
 
     public async Task<T?> GetOrSetHashAsync<T>(
@@ -87,67 +64,44 @@ public sealed class CacheShell
             return cached;
         }
 
-        var lockKey = $"{key}:{field}:lock";
-        var lockToken = Guid.NewGuid().ToString("N");
-        var lockOk = await TryAcquireLockAsync(lockKey, lockToken, lockExpiry ?? TimeSpan.FromSeconds(5));
+        // Distributed lock disabled by request:
+        // var lockKey = $"{key}:{field}:lock";
+        // var lockToken = Guid.NewGuid().ToString("N");
+        // var lockOk = await TryAcquireLockAsync(lockKey, lockToken, lockExpiry ?? TimeSpan.FromSeconds(5));
 
-        if (lockOk)
+        var secondRead = await _repository.HGetAsync<T>(key, field);
+        if (secondRead is not null)
         {
-            try
-            {
-                var secondRead = await _repository.HGetAsync<T>(key, field);
-                if (secondRead is not null)
-                {
-                    return secondRead;
-                }
-
-                var data = await dataFactory();
-                if (data is not null)
-                {
-                    await _repository.HSetAsync(key, field, data);
-                    await _repository.ExpireAsync(key, expiry);
-                }
-
-                return data;
-            }
-            finally
-            {
-                await ReleaseLockAsync(lockKey, lockToken);
-            }
+            return secondRead;
         }
 
-        var baseDelay = retryDelay ?? DefaultRetryBaseDelay;
-        for (var i = 0; i < retryCount; i++)
+        var data = await dataFactory();
+        if (data is not null)
         {
-            await Task.Delay(ComputeRetryDelay(baseDelay, i));
-            var retried = await _repository.HGetAsync<T>(key, field);
-            if (retried is not null)
-            {
-                return retried;
-            }
+            await _repository.HSetAsync(key, field, data);
+            await _repository.ExpireAsync(key, expiry);
         }
 
-        _logger?.Invoke($"CacheShell fallback to direct data factory for hash: {key}/{field}");
-        return await dataFactory();
+        return data;
     }
 
-    private async Task<bool> TryAcquireLockAsync(string lockKey, string lockToken, TimeSpan lockExpiry)
-    {
-        var db = _pool.GetDatabase();
-        return await db.StringSetAsync(lockKey, lockToken, lockExpiry, When.NotExists);
-    }
-
-    private async Task ReleaseLockAsync(string lockKey, string lockToken)
-    {
-        const string releaseScript = """
-                                     if redis.call('GET', KEYS[1]) == ARGV[1] then
-                                       return redis.call('DEL', KEYS[1])
-                                     end
-                                     return 0
-                                     """;
-        var db = _pool.GetDatabase();
-        await db.ScriptEvaluateAsync(releaseScript, [lockKey], [lockToken]);
-    }
+    // private async Task<bool> TryAcquireLockAsync(string lockKey, string lockToken, TimeSpan lockExpiry)
+    // {
+    //     var db = _pool.GetDatabase();
+    //     return await db.StringSetAsync(lockKey, lockToken, lockExpiry, When.NotExists);
+    // }
+    //
+    // private async Task ReleaseLockAsync(string lockKey, string lockToken)
+    // {
+    //     const string releaseScript = """
+    //                                  if redis.call('GET', KEYS[1]) == ARGV[1] then
+    //                                    return redis.call('DEL', KEYS[1])
+    //                                  end
+    //                                  return 0
+    //                                  """;
+    //     var db = _pool.GetDatabase();
+    //     await db.ScriptEvaluateAsync(releaseScript, [lockKey], [lockToken]);
+    // }
 
     private static TimeSpan ComputeRetryDelay(TimeSpan baseDelay, int attempt)
     {

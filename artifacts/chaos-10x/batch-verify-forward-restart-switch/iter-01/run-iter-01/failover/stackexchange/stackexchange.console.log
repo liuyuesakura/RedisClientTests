@@ -1,0 +1,78 @@
+RunId: iter-01
+Suite: stackexchange
+Target: http://127.0.0.1:50052
+Output: artifacts\chaos-10x\batch-verify-forward-restart-switch\iter-01\run-iter-01\failover\stackexchange\run-iter-01
+
+=== Phase: warmup (stackexchange) ===
+dotnet run --project CsredisGrpcStressTests -- --suite stackexchange --target http://127.0.0.1:50052 --method all --total 10 --concurrency 2 --key-prefix grpc:phased:stackexchange:warmup:iter-01 --pipeline-key-count 3 --expiry-seconds 300
+Log: artifacts\chaos-10x\batch-verify-forward-restart-switch\iter-01\run-iter-01\failover\stackexchange\run-iter-01\warmup.log
+[GrpcStress] suite=stackexchange, method=all, target=http://127.0.0.1:50052, total=10, concurrency=2
+[GrpcStress] Completed
+[GrpcStress] Overall Success=10, Failed=0, Duration=247ms, QPS=40.55
+[GrpcStress] Overall Latency(ms): p50=9.45, p95=167.61, p99=167.61, max=167.61
+[GrpcStress:cacheshell] Success=2, Failed=0, p95=167.13ms, p99=167.13ms
+[GrpcStress:get] Success=2, Failed=0, p95=7.17ms, p99=7.17ms
+[GrpcStress:node] Success=2, Failed=0, p95=48.74ms, p99=48.74ms
+[GrpcStress:pipeline] Success=2, Failed=0, p95=167.61ms, p99=167.61ms
+[GrpcStress:slot] Success=2, Failed=0, p95=14.53ms, p99=14.53ms
+
+=== Phase: baseline-get (stackexchange) ===
+dotnet run --project CsredisGrpcStressTests -- --suite stackexchange --target http://127.0.0.1:50052 --method get --total 30 --concurrency 6 --key-prefix grpc:phased:stackexchange:baseline-get:iter-01 --pipeline-key-count 3 --expiry-seconds 300
+Log: artifacts\chaos-10x\batch-verify-forward-restart-switch\iter-01\run-iter-01\failover\stackexchange\run-iter-01\baseline-get.log
+[GrpcStress] suite=stackexchange, method=get, target=http://127.0.0.1:50052, total=30, concurrency=6
+[GrpcStress] Completed
+[GrpcStress] Overall Success=19, Failed=11, Duration=4382ms, QPS=6.85
+[GrpcStress] Overall Latency(ms): p50=4.85, p95=4229.54, p99=4366.15, max=4366.15
+[GrpcStress:get] Success=19, Failed=11, p95=4229.54ms, p99=4366.15ms
+
+=== Phase: baseline-pipeline (stackexchange) ===
+dotnet run --project CsredisGrpcStressTests -- --suite stackexchange --target http://127.0.0.1:50052 --method pipeline --total 30 --concurrency 6 --key-prefix grpc:phased:stackexchange:baseline-pipeline:iter-01 --pipeline-key-count 3 --expiry-seconds 300
+Log: artifacts\chaos-10x\batch-verify-forward-restart-switch\iter-01\run-iter-01\failover\stackexchange\run-iter-01\baseline-pipeline.log
+[GrpcStress] suite=stackexchange, method=pipeline, target=http://127.0.0.1:50052, total=30, concurrency=6
+[GrpcStress] Completed
+[GrpcStress] Overall Success=30, Failed=0, Duration=179ms, QPS=167.38
+[GrpcStress] Overall Latency(ms): p50=4.82, p95=156.27, p99=156.29, max=156.29
+[GrpcStress:pipeline] Success=30, Failed=0, p95=156.27ms, p99=156.29ms
+
+=== Phase: baseline-cacheshell (stackexchange) ===
+dotnet run --project CsredisGrpcStressTests -- --suite stackexchange --target http://127.0.0.1:50052 --method cacheshell --total 30 --concurrency 6 --key-prefix grpc:phased:stackexchange:baseline-cacheshell:iter-01 --pipeline-key-count 3 --expiry-seconds 300
+Log: artifacts\chaos-10x\batch-verify-forward-restart-switch\iter-01\run-iter-01\failover\stackexchange\run-iter-01\baseline-cacheshell.log
+[GrpcStress] suite=stackexchange, method=cacheshell, target=http://127.0.0.1:50052, total=30, concurrency=6
+[GrpcStress] Completed
+[GrpcStress] Overall Success=30, Failed=0, Duration=210ms, QPS=143.14
+[GrpcStress] Overall Latency(ms): p50=9.03, p95=163.07, p99=163.10, max=163.10
+[GrpcStress:cacheshell] Success=30, Failed=0, p95=163.07ms, p99=163.10ms
+
+=== Phase: baseline-slot (stackexchange) ===
+dotnet run --project CsredisGrpcStressTests -- --suite stackexchange --target http://127.0.0.1:50052 --method slot --total 30 --concurrency 6 --key-prefix grpc:phased:stackexchange:baseline-slot:iter-01 --pipeline-key-count 3 --expiry-seconds 300
+Log: artifacts\chaos-10x\batch-verify-forward-restart-switch\iter-01\run-iter-01\failover\stackexchange\run-iter-01\baseline-slot.log
+[GrpcStress] suite=stackexchange, method=slot, target=http://127.0.0.1:50052, total=30, concurrency=6
+[GrpcStress] Completed
+[GrpcStress] Overall Success=30, Failed=0, Duration=167ms, QPS=180.15
+[GrpcStress] Overall Latency(ms): p50=2.53, p95=153.09, p99=153.11, max=153.11
+[GrpcStress:slot] Success=30, Failed=0, p95=153.09ms, p99=153.11ms
+
+=== Phase: baseline-node (stackexchange) ===
+dotnet run --project CsredisGrpcStressTests -- --suite stackexchange --target http://127.0.0.1:50052 --method node --total 100 --concurrency 4 --key-prefix grpc:phased:stackexchange:baseline-node:iter-01 --pipeline-key-count 3 --expiry-seconds 300
+Log: artifacts\chaos-10x\batch-verify-forward-restart-switch\iter-01\run-iter-01\failover\stackexchange\run-iter-01\baseline-node.log
+[GrpcStress] suite=stackexchange, method=node, target=http://127.0.0.1:50052, total=100, concurrency=4
+[GrpcStress] Completed
+[GrpcStress] Overall Success=100, Failed=0, Duration=1701ms, QPS=58.78
+[GrpcStress] Overall Latency(ms): p50=53.73, p95=154.75, p99=187.44, max=187.46
+[GrpcStress:node] Success=100, Failed=0, p95=154.75ms, p99=187.44ms
+
+=== Phase: mixed (stackexchange) ===
+dotnet run --project CsredisGrpcStressTests -- --suite stackexchange --target http://127.0.0.1:50052 --method all --total 80 --concurrency 10 --key-prefix grpc:phased:stackexchange:mixed:iter-01 --pipeline-key-count 3 --expiry-seconds 300
+Log: artifacts\chaos-10x\batch-verify-forward-restart-switch\iter-01\run-iter-01\failover\stackexchange\run-iter-01\mixed.log
+[GrpcStress] suite=stackexchange, method=all, target=http://127.0.0.1:50052, total=80, concurrency=10
+[GrpcStress] Completed
+[GrpcStress] Overall Success=80, Failed=0, Duration=373ms, QPS=214.33
+[GrpcStress] Overall Latency(ms): p50=15.15, p95=149.34, p99=164.37, max=164.37
+[GrpcStress:cacheshell] Success=16, Failed=0, p95=149.36ms, p99=149.36ms
+[GrpcStress:get] Success=16, Failed=0, p95=149.32ms, p99=149.32ms
+[GrpcStress:node] Success=16, Failed=0, p95=164.37ms, p99=164.37ms
+[GrpcStress:pipeline] Success=16, Failed=0, p95=149.39ms, p99=149.39ms
+[GrpcStress:slot] Success=16, Failed=0, p95=149.34ms, p99=149.34ms
+
+=== Phased Stress Summary (stackexchange) ===
+Summary CSV: artifacts\chaos-10x\batch-verify-forward-restart-switch\iter-01\run-iter-01\failover\stackexchange\run-iter-01\summary.csv

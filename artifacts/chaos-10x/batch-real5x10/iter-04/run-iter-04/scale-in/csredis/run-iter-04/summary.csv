@@ -1,0 +1,8 @@
+﻿"Suite","Phase","Method","Total","Concurrency","Log","Qps","P95","P99","Success","Failed","Status"
+"csredis","warmup","all","500","10","artifacts\chaos-10x\batch-real5x10\iter-04\run-iter-04\scale-in\csredis\run-iter-04\warmup.log","239.70","0.33","2072.17","0","500","OK"
+"csredis","baseline-get","get","2000","40","artifacts\chaos-10x\batch-real5x10\iter-04\run-iter-04\scale-in\csredis\run-iter-04\baseline-get.log","944.46","2.06","2069.30","0","2000","OK"
+"csredis","baseline-pipeline","pipeline","2000","40","artifacts\chaos-10x\batch-real5x10\iter-04\run-iter-04\scale-in\csredis\run-iter-04\baseline-pipeline.log","941.29","1.79","2072.53","0","2000","OK"
+"csredis","baseline-cacheshell","cacheshell","2000","40","artifacts\chaos-10x\batch-real5x10\iter-04\run-iter-04\scale-in\csredis\run-iter-04\baseline-cacheshell.log","944.13","1.24","2065.61","0","2000","OK"
+"csredis","baseline-slot","slot","2000","40","artifacts\chaos-10x\batch-real5x10\iter-04\run-iter-04\scale-in\csredis\run-iter-04\baseline-slot.log","945.55","1.31","2063.84","0","2000","OK"
+"csredis","baseline-node","node","200","10","artifacts\chaos-10x\batch-real5x10\iter-04\run-iter-04\scale-in\csredis\run-iter-04\baseline-node.log","96.01","0.29","2075.88","0","200","OK"
+"csredis","mixed","all","8000","80","artifacts\chaos-10x\batch-real5x10\iter-04\run-iter-04\scale-in\csredis\run-iter-04\mixed.log","3504.13","1.44","15.26","0","8000","OK"

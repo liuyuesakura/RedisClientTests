@@ -1,0 +1,8 @@
+﻿"Suite","Phase","Method","Total","Concurrency","Log","Qps","P95","P99","Success","Failed","Status"
+"stackexchange","warmup","all","500","20","artifacts\chaos-compare\run-real-all-restart-apps\scale-in\stackexchange\run-real-all-restart-apps\warmup.log","235.25","388.45","555.68","500","0","OK"
+"stackexchange","baseline-get","get","5000","100","artifacts\chaos-compare\run-real-all-restart-apps\scale-in\stackexchange\run-real-all-restart-apps\baseline-get.log","6476.52","23.22","135.41","5000","0","OK"
+"stackexchange","baseline-pipeline","pipeline","5000","100","artifacts\chaos-compare\run-real-all-restart-apps\scale-in\stackexchange\run-real-all-restart-apps\baseline-pipeline.log","4715.17","34.44","134.62","5000","0","OK"
+"stackexchange","baseline-cacheshell","cacheshell","5000","100","artifacts\chaos-compare\run-real-all-restart-apps\scale-in\stackexchange\run-real-all-restart-apps\baseline-cacheshell.log","3046.21","46.48","133.86","5000","0","OK"
+"stackexchange","baseline-slot","slot","5000","100","artifacts\chaos-compare\run-real-all-restart-apps\scale-in\stackexchange\run-real-all-restart-apps\baseline-slot.log","9158.00","13.52","127.39","5000","0","OK"
+"stackexchange","baseline-node","node","500","25","artifacts\chaos-compare\run-real-all-restart-apps\scale-in\stackexchange\run-real-all-restart-apps\baseline-node.log","85.40","754.03","1045.12","500","0","OK"
+"stackexchange","mixed","all","20000","200","artifacts\chaos-compare\run-real-all-restart-apps\scale-in\stackexchange\run-real-all-restart-apps\mixed.log","233.43","1692.46","10303.13","19959","41","OK"

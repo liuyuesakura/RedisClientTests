@@ -1,0 +1,2 @@
+﻿"Suite","Phase","Method","Total","Concurrency","Log","Qps","P95","P99","Success","Failed","Status"
+"csredis","dryrun","all","","","artifacts\chaos-compare\run-verify-dryrun-4fix\scale-in\csredis\csredis.console.log","","","","","","DRYRUN"

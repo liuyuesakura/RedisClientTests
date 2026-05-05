@@ -1,0 +1,8 @@
+﻿"Suite","Phase","Method","Total","Concurrency","Log","Qps","P95","P99","Success","Failed","Status"
+"csredis","warmup","all","500","20","artifacts\chaos-compare\run-real-all-restart-apps\node-down\csredis\run-real-all-restart-apps\warmup.log","28.73","2781.16","14950.02","500","0","OK"
+"csredis","baseline-get","get","5000","100","artifacts\chaos-compare\run-real-all-restart-apps\node-down\csredis\run-real-all-restart-apps\baseline-get.log","4308.50","44.59","126.12","5000","0","OK"
+"csredis","baseline-pipeline","pipeline","5000","100","artifacts\chaos-compare\run-real-all-restart-apps\node-down\csredis\run-real-all-restart-apps\baseline-pipeline.log","2941.88","58.02","212.21","5000","0","OK"
+"csredis","baseline-cacheshell","cacheshell","5000","100","artifacts\chaos-compare\run-real-all-restart-apps\node-down\csredis\run-real-all-restart-apps\baseline-cacheshell.log","1577.53","127.28","200.41","5000","0","OK"
+"csredis","baseline-slot","slot","5000","100","artifacts\chaos-compare\run-real-all-restart-apps\node-down\csredis\run-real-all-restart-apps\baseline-slot.log","7875.03","23.61","119.65","5000","0","OK"
+"csredis","baseline-node","node","500","25","artifacts\chaos-compare\run-real-all-restart-apps\node-down\csredis\run-real-all-restart-apps\baseline-node.log","23.66","3283.16","9382.18","500","0","OK"
+"csredis","mixed","all","20000","200","artifacts\chaos-compare\run-real-all-restart-apps\node-down\csredis\run-real-all-restart-apps\mixed.log","76.69","12383.74","24848.78","19835","165","OK"

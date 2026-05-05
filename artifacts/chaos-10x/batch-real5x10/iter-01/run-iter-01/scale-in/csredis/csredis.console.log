@@ -1,0 +1,78 @@
+RunId: iter-01
+Suite: csredis
+Target: http://127.0.0.1:50051
+Output: artifacts\chaos-10x\batch-real5x10\iter-01\run-iter-01\scale-in\csredis\run-iter-01
+
+=== Phase: warmup (csredis) ===
+dotnet run --project CsredisGrpcStressTests -- --suite csredis --target http://127.0.0.1:50051 --method all --total 500 --concurrency 10 --key-prefix grpc:phased:csredis:warmup:iter-01 --pipeline-key-count 3 --expiry-seconds 300
+Log: artifacts\chaos-10x\batch-real5x10\iter-01\run-iter-01\scale-in\csredis\run-iter-01\warmup.log
+[GrpcStress] suite=csredis, method=all, target=http://127.0.0.1:50051, total=500, concurrency=10
+[GrpcStress] Completed
+[GrpcStress] Overall Success=0, Failed=500, Duration=2064ms, QPS=242.26
+[GrpcStress] Overall Latency(ms): p50=0.14, p95=0.21, p99=2052.15, max=2052.23
+[GrpcStress:cacheshell] Success=0, Failed=100, p95=0.20ms, p99=2052.19ms
+[GrpcStress:get] Success=0, Failed=100, p95=0.21ms, p99=2051.98ms
+[GrpcStress:node] Success=0, Failed=100, p95=0.22ms, p99=2052.14ms
+[GrpcStress:pipeline] Success=0, Failed=100, p95=0.20ms, p99=2052.13ms
+[GrpcStress:slot] Success=0, Failed=100, p95=0.20ms, p99=2052.12ms
+
+=== Phase: baseline-get (csredis) ===
+dotnet run --project CsredisGrpcStressTests -- --suite csredis --target http://127.0.0.1:50051 --method get --total 2000 --concurrency 40 --key-prefix grpc:phased:csredis:baseline-get:iter-01 --pipeline-key-count 3 --expiry-seconds 300
+Log: artifacts\chaos-10x\batch-real5x10\iter-01\run-iter-01\scale-in\csredis\run-iter-01\baseline-get.log
+[GrpcStress] suite=csredis, method=get, target=http://127.0.0.1:50051, total=2000, concurrency=40
+[GrpcStress] Completed
+[GrpcStress] Overall Success=0, Failed=2000, Duration=2153ms, QPS=928.97
+[GrpcStress] Overall Latency(ms): p50=0.16, p95=2.80, p99=2104.05, max=2139.81
+[GrpcStress:get] Success=0, Failed=2000, p95=2.80ms, p99=2104.05ms
+
+=== Phase: baseline-pipeline (csredis) ===
+dotnet run --project CsredisGrpcStressTests -- --suite csredis --target http://127.0.0.1:50051 --method pipeline --total 2000 --concurrency 40 --key-prefix grpc:phased:csredis:baseline-pipeline:iter-01 --pipeline-key-count 3 --expiry-seconds 300
+Log: artifacts\chaos-10x\batch-real5x10\iter-01\run-iter-01\scale-in\csredis\run-iter-01\baseline-pipeline.log
+[GrpcStress] suite=csredis, method=pipeline, target=http://127.0.0.1:50051, total=2000, concurrency=40
+[GrpcStress] Completed
+[GrpcStress] Overall Success=0, Failed=2000, Duration=2106ms, QPS=949.72
+[GrpcStress] Overall Latency(ms): p50=0.15, p95=0.80, p99=2063.80, max=2102.26
+[GrpcStress:pipeline] Success=0, Failed=2000, p95=0.80ms, p99=2063.80ms
+
+=== Phase: baseline-cacheshell (csredis) ===
+dotnet run --project CsredisGrpcStressTests -- --suite csredis --target http://127.0.0.1:50051 --method cacheshell --total 2000 --concurrency 40 --key-prefix grpc:phased:csredis:baseline-cacheshell:iter-01 --pipeline-key-count 3 --expiry-seconds 300
+Log: artifacts\chaos-10x\batch-real5x10\iter-01\run-iter-01\scale-in\csredis\run-iter-01\baseline-cacheshell.log
+[GrpcStress] suite=csredis, method=cacheshell, target=http://127.0.0.1:50051, total=2000, concurrency=40
+[GrpcStress] Completed
+[GrpcStress] Overall Success=0, Failed=2000, Duration=2118ms, QPS=944.15
+[GrpcStress] Overall Latency(ms): p50=0.15, p95=1.36, p99=2072.35, max=2114.31
+[GrpcStress:cacheshell] Success=0, Failed=2000, p95=1.36ms, p99=2072.35ms
+
+=== Phase: baseline-slot (csredis) ===
+dotnet run --project CsredisGrpcStressTests -- --suite csredis --target http://127.0.0.1:50051 --method slot --total 2000 --concurrency 40 --key-prefix grpc:phased:csredis:baseline-slot:iter-01 --pipeline-key-count 3 --expiry-seconds 300
+Log: artifacts\chaos-10x\batch-real5x10\iter-01\run-iter-01\scale-in\csredis\run-iter-01\baseline-slot.log
+[GrpcStress] suite=csredis, method=slot, target=http://127.0.0.1:50051, total=2000, concurrency=40
+[GrpcStress] Completed
+[GrpcStress] Overall Success=0, Failed=2000, Duration=2093ms, QPS=955.62
+[GrpcStress] Overall Latency(ms): p50=0.16, p95=0.36, p99=2049.13, max=2089.45
+[GrpcStress:slot] Success=0, Failed=2000, p95=0.36ms, p99=2049.13ms
+
+=== Phase: baseline-node (csredis) ===
+dotnet run --project CsredisGrpcStressTests -- --suite csredis --target http://127.0.0.1:50051 --method node --total 200 --concurrency 10 --key-prefix grpc:phased:csredis:baseline-node:iter-01 --pipeline-key-count 3 --expiry-seconds 300
+Log: artifacts\chaos-10x\batch-real5x10\iter-01\run-iter-01\scale-in\csredis\run-iter-01\baseline-node.log
+[GrpcStress] suite=csredis, method=node, target=http://127.0.0.1:50051, total=200, concurrency=10
+[GrpcStress] Completed
+[GrpcStress] Overall Success=0, Failed=200, Duration=2058ms, QPS=97.20
+[GrpcStress] Overall Latency(ms): p50=0.14, p95=0.28, p99=2050.99, max=2051.00
+[GrpcStress:node] Success=0, Failed=200, p95=0.28ms, p99=2050.99ms
+
+=== Phase: mixed (csredis) ===
+dotnet run --project CsredisGrpcStressTests -- --suite csredis --target http://127.0.0.1:50051 --method all --total 8000 --concurrency 80 --key-prefix grpc:phased:csredis:mixed:iter-01 --pipeline-key-count 3 --expiry-seconds 300
+Log: artifacts\chaos-10x\batch-real5x10\iter-01\run-iter-01\scale-in\csredis\run-iter-01\mixed.log
+[GrpcStress] suite=csredis, method=all, target=http://127.0.0.1:50051, total=8000, concurrency=80
+[GrpcStress] Completed
+[GrpcStress] Overall Success=0, Failed=8000, Duration=2202ms, QPS=3633.20
+[GrpcStress] Overall Latency(ms): p50=0.15, p95=0.75, p99=8.31, max=2197.03
+[GrpcStress:cacheshell] Success=0, Failed=1600, p95=0.76ms, p99=5.83ms
+[GrpcStress:get] Success=0, Failed=1600, p95=0.78ms, p99=5.67ms
+[GrpcStress:node] Success=0, Failed=1600, p95=0.63ms, p99=5.46ms
+[GrpcStress:pipeline] Success=0, Failed=1600, p95=0.64ms, p99=6.88ms
+[GrpcStress:slot] Success=0, Failed=1600, p95=0.93ms, p99=8.31ms
+
+=== Phased Stress Summary (csredis) ===
+Summary CSV: artifacts\chaos-10x\batch-real5x10\iter-01\run-iter-01\scale-in\csredis\run-iter-01\summary.csv

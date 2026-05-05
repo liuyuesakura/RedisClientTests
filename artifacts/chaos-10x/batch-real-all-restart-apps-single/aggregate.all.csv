@@ -1,0 +1,7 @@
+﻿"Iteration","Scenario","Suite","Success","Failed","SuccessRate","MixedQps","MixedP95","MixedP99","WorstMethodP95Ratio","Verdict","FailureClass","FailureReason"
+"1","failover","csredis","41000","0","100","87.36","10611.3","20732.28","200.44","FAIL","mixed_or_unknown","no_single_dominant_pattern"
+"1","failover","stackexchange","40994","6","99.99","199.28","2654.08","21899.6","23.81","FAIL","timeout_dominant","mixed_p95_high_with_failures"
+"1","node-down","csredis","40835","165","99.6","76.69","12383.74","24848.78","128.95","FAIL","timeout_dominant","mixed_p95_high_with_failures"
+"1","node-down","stackexchange","40999","1","100","227.05","1653.85","9752.01","22.75","FAIL","mixed_or_unknown","no_single_dominant_pattern"
+"1","scale-in","csredis","40602","398","99.03","85.32","10533.29","27517.21","135.53","FAIL","timeout_dominant","mixed_p95_high_with_failures"
+"1","scale-in","stackexchange","40959","41","99.9","233.43","1692.46","10303.13","21.65","FAIL","mixed_or_unknown","no_single_dominant_pattern"

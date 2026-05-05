@@ -1,0 +1,78 @@
+RunId: verify-real-4fix
+Suite: stackexchange
+Target: http://127.0.0.1:50052
+Output: artifacts\chaos-compare\run-verify-real-4fix\node-down\stackexchange\run-verify-real-4fix
+
+=== Phase: warmup (stackexchange) ===
+dotnet run --project CsredisGrpcStressTests -- --suite stackexchange --target http://127.0.0.1:50052 --method all --total 20 --concurrency 5 --key-prefix grpc:phased:stackexchange:warmup:verify-real-4fix --pipeline-key-count 3 --expiry-seconds 300
+Log: artifacts\chaos-compare\run-verify-real-4fix\node-down\stackexchange\run-verify-real-4fix\warmup.log
+[GrpcStress] suite=stackexchange, method=all, target=http://127.0.0.1:50052, total=20, concurrency=5
+[GrpcStress] Completed
+[GrpcStress] Overall Success=20, Failed=0, Duration=194ms, QPS=103.12
+[GrpcStress] Overall Latency(ms): p50=13.97, p95=137.86, p99=146.52, max=146.52
+[GrpcStress:cacheshell] Success=4, Failed=0, p95=137.86ms, p99=137.86ms
+[GrpcStress:get] Success=4, Failed=0, p95=137.71ms, p99=137.71ms
+[GrpcStress:node] Success=4, Failed=0, p95=146.52ms, p99=146.52ms
+[GrpcStress:pipeline] Success=4, Failed=0, p95=137.80ms, p99=137.80ms
+[GrpcStress:slot] Success=4, Failed=0, p95=137.75ms, p99=137.75ms
+
+=== Phase: baseline-get (stackexchange) ===
+dotnet run --project CsredisGrpcStressTests -- --suite stackexchange --target http://127.0.0.1:50052 --method get --total 80 --concurrency 20 --key-prefix grpc:phased:stackexchange:baseline-get:verify-real-4fix --pipeline-key-count 3 --expiry-seconds 300
+Log: artifacts\chaos-compare\run-verify-real-4fix\node-down\stackexchange\run-verify-real-4fix\baseline-get.log
+[GrpcStress] suite=stackexchange, method=get, target=http://127.0.0.1:50052, total=80, concurrency=20
+[GrpcStress] Completed
+[GrpcStress] Overall Success=80, Failed=0, Duration=178ms, QPS=449.60
+[GrpcStress] Overall Latency(ms): p50=5.04, p95=157.77, p99=159.51, max=159.51
+[GrpcStress:get] Success=80, Failed=0, p95=157.77ms, p99=159.51ms
+
+=== Phase: baseline-pipeline (stackexchange) ===
+dotnet run --project CsredisGrpcStressTests -- --suite stackexchange --target http://127.0.0.1:50052 --method pipeline --total 80 --concurrency 20 --key-prefix grpc:phased:stackexchange:baseline-pipeline:verify-real-4fix --pipeline-key-count 3 --expiry-seconds 300
+Log: artifacts\chaos-compare\run-verify-real-4fix\node-down\stackexchange\run-verify-real-4fix\baseline-pipeline.log
+[GrpcStress] suite=stackexchange, method=pipeline, target=http://127.0.0.1:50052, total=80, concurrency=20
+[GrpcStress] Completed
+[GrpcStress] Overall Success=80, Failed=0, Duration=290ms, QPS=276.09
+[GrpcStress] Overall Latency(ms): p50=26.16, p95=209.66, p99=212.43, max=212.43
+[GrpcStress:pipeline] Success=80, Failed=0, p95=209.66ms, p99=212.43ms
+
+=== Phase: baseline-cacheshell (stackexchange) ===
+dotnet run --project CsredisGrpcStressTests -- --suite stackexchange --target http://127.0.0.1:50052 --method cacheshell --total 80 --concurrency 20 --key-prefix grpc:phased:stackexchange:baseline-cacheshell:verify-real-4fix --pipeline-key-count 3 --expiry-seconds 300
+Log: artifacts\chaos-compare\run-verify-real-4fix\node-down\stackexchange\run-verify-real-4fix\baseline-cacheshell.log
+[GrpcStress] suite=stackexchange, method=cacheshell, target=http://127.0.0.1:50052, total=80, concurrency=20
+[GrpcStress] Completed
+[GrpcStress] Overall Success=80, Failed=0, Duration=236ms, QPS=338.69
+[GrpcStress] Overall Latency(ms): p50=24.76, p95=157.23, p99=159.24, max=159.24
+[GrpcStress:cacheshell] Success=80, Failed=0, p95=157.23ms, p99=159.24ms
+
+=== Phase: baseline-slot (stackexchange) ===
+dotnet run --project CsredisGrpcStressTests -- --suite stackexchange --target http://127.0.0.1:50052 --method slot --total 80 --concurrency 20 --key-prefix grpc:phased:stackexchange:baseline-slot:verify-real-4fix --pipeline-key-count 3 --expiry-seconds 300
+Log: artifacts\chaos-compare\run-verify-real-4fix\node-down\stackexchange\run-verify-real-4fix\baseline-slot.log
+[GrpcStress] suite=stackexchange, method=slot, target=http://127.0.0.1:50052, total=80, concurrency=20
+[GrpcStress] Completed
+[GrpcStress] Overall Success=80, Failed=0, Duration=168ms, QPS=475.27
+[GrpcStress] Overall Latency(ms): p50=4.52, p95=151.80, p99=153.78, max=153.78
+[GrpcStress:slot] Success=80, Failed=0, p95=151.80ms, p99=153.78ms
+
+=== Phase: baseline-node (stackexchange) ===
+dotnet run --project CsredisGrpcStressTests -- --suite stackexchange --target http://127.0.0.1:50052 --method node --total 100 --concurrency 5 --key-prefix grpc:phased:stackexchange:baseline-node:verify-real-4fix --pipeline-key-count 3 --expiry-seconds 300
+Log: artifacts\chaos-compare\run-verify-real-4fix\node-down\stackexchange\run-verify-real-4fix\baseline-node.log
+[GrpcStress] suite=stackexchange, method=node, target=http://127.0.0.1:50052, total=100, concurrency=5
+[GrpcStress] Completed
+[GrpcStress] Overall Success=100, Failed=0, Duration=2548ms, QPS=39.25
+[GrpcStress] Overall Latency(ms): p50=97.18, p95=285.17, p99=365.77, max=365.81
+[GrpcStress:node] Success=100, Failed=0, p95=285.17ms, p99=365.77ms
+
+=== Phase: mixed (stackexchange) ===
+dotnet run --project CsredisGrpcStressTests -- --suite stackexchange --target http://127.0.0.1:50052 --method all --total 200 --concurrency 40 --key-prefix grpc:phased:stackexchange:mixed:verify-real-4fix --pipeline-key-count 3 --expiry-seconds 300
+Log: artifacts\chaos-compare\run-verify-real-4fix\node-down\stackexchange\run-verify-real-4fix\mixed.log
+[GrpcStress] suite=stackexchange, method=all, target=http://127.0.0.1:50052, total=200, concurrency=40
+[GrpcStress] Completed
+[GrpcStress] Overall Success=200, Failed=0, Duration=881ms, QPS=227.12
+[GrpcStress] Overall Latency(ms): p50=54.44, p95=452.27, p99=493.18, max=526.49
+[GrpcStress:cacheshell] Success=40, Failed=0, p95=247.82ms, p99=263.29ms
+[GrpcStress:get] Success=40, Failed=0, p95=243.93ms, p99=245.04ms
+[GrpcStress:node] Success=40, Failed=0, p95=493.18ms, p99=526.49ms
+[GrpcStress:pipeline] Success=40, Failed=0, p95=245.04ms, p99=246.40ms
+[GrpcStress:slot] Success=40, Failed=0, p95=243.49ms, p99=244.44ms
+
+=== Phased Stress Summary (stackexchange) ===
+Summary CSV: artifacts\chaos-compare\run-verify-real-4fix\node-down\stackexchange\run-verify-real-4fix\summary.csv

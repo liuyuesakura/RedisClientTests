@@ -1,0 +1,7 @@
+﻿"Scenario","Suite","Runs","PassCount","FailCount","AvgSuccessRate","AvgMixedQps","AvgMixedP95","AvgMixedP99","AvgWorstMethodP95Ratio"
+"failover","csredis","5","0","5","32.52","2820.33","979.67","2091.09","20.48"
+"failover","stackexchange","5","0","5","93.63","468.17","659.82","1105.12","10.56"
+"node-down","csredis","5","0","5","15.57","2836.45","785.81","2284.92","45.38"
+"node-down","stackexchange","5","0","5","77.88","559.74","578.14","835.19","9.19"
+"scale-in","csredis","5","0","5","15.57","2868.4","855.29","2114.48","21.62"
+"scale-in","stackexchange","5","0","5","77.84","546.51","590.68","858.91","8.37"

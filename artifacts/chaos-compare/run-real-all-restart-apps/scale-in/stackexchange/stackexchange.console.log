@@ -1,0 +1,78 @@
+RunId: real-all-restart-apps
+Suite: stackexchange
+Target: http://127.0.0.1:50052
+Output: artifacts\chaos-compare\run-real-all-restart-apps\scale-in\stackexchange\run-real-all-restart-apps
+
+=== Phase: warmup (stackexchange) ===
+dotnet run --project CsredisGrpcStressTests -- --suite stackexchange --target http://127.0.0.1:50052 --method all --total 500 --concurrency 20 --key-prefix grpc:phased:stackexchange:warmup:real-all-restart-apps --pipeline-key-count 3 --expiry-seconds 300
+Log: artifacts\chaos-compare\run-real-all-restart-apps\scale-in\stackexchange\run-real-all-restart-apps\warmup.log
+[GrpcStress] suite=stackexchange, method=all, target=http://127.0.0.1:50052, total=500, concurrency=20
+[GrpcStress] Completed
+[GrpcStress] Overall Success=500, Failed=0, Duration=2125ms, QPS=235.25
+[GrpcStress] Overall Latency(ms): p50=28.73, p95=388.45, p99=555.68, max=615.16
+[GrpcStress:cacheshell] Success=100, Failed=0, p95=164.62ms, p99=209.94ms
+[GrpcStress:get] Success=100, Failed=0, p95=73.50ms, p99=209.51ms
+[GrpcStress:node] Success=100, Failed=0, p95=555.68ms, p99=592.26ms
+[GrpcStress:pipeline] Success=100, Failed=0, p95=84.89ms, p99=237.59ms
+[GrpcStress:slot] Success=100, Failed=0, p95=77.72ms, p99=230.10ms
+
+=== Phase: baseline-get (stackexchange) ===
+dotnet run --project CsredisGrpcStressTests -- --suite stackexchange --target http://127.0.0.1:50052 --method get --total 5000 --concurrency 100 --key-prefix grpc:phased:stackexchange:baseline-get:real-all-restart-apps --pipeline-key-count 3 --expiry-seconds 300
+Log: artifacts\chaos-compare\run-real-all-restart-apps\scale-in\stackexchange\run-real-all-restart-apps\baseline-get.log
+[GrpcStress] suite=stackexchange, method=get, target=http://127.0.0.1:50052, total=5000, concurrency=100
+[GrpcStress] Completed
+[GrpcStress] Overall Success=5000, Failed=0, Duration=772ms, QPS=6476.52
+[GrpcStress] Overall Latency(ms): p50=11.24, p95=23.22, p99=135.41, max=179.02
+[GrpcStress:get] Success=5000, Failed=0, p95=23.22ms, p99=135.41ms
+
+=== Phase: baseline-pipeline (stackexchange) ===
+dotnet run --project CsredisGrpcStressTests -- --suite stackexchange --target http://127.0.0.1:50052 --method pipeline --total 5000 --concurrency 100 --key-prefix grpc:phased:stackexchange:baseline-pipeline:real-all-restart-apps --pipeline-key-count 3 --expiry-seconds 300
+Log: artifacts\chaos-compare\run-real-all-restart-apps\scale-in\stackexchange\run-real-all-restart-apps\baseline-pipeline.log
+[GrpcStress] suite=stackexchange, method=pipeline, target=http://127.0.0.1:50052, total=5000, concurrency=100
+[GrpcStress] Completed
+[GrpcStress] Overall Success=5000, Failed=0, Duration=1060ms, QPS=4715.17
+[GrpcStress] Overall Latency(ms): p50=16.82, p95=34.44, p99=134.62, max=192.71
+[GrpcStress:pipeline] Success=5000, Failed=0, p95=34.44ms, p99=134.62ms
+
+=== Phase: baseline-cacheshell (stackexchange) ===
+dotnet run --project CsredisGrpcStressTests -- --suite stackexchange --target http://127.0.0.1:50052 --method cacheshell --total 5000 --concurrency 100 --key-prefix grpc:phased:stackexchange:baseline-cacheshell:real-all-restart-apps --pipeline-key-count 3 --expiry-seconds 300
+Log: artifacts\chaos-compare\run-real-all-restart-apps\scale-in\stackexchange\run-real-all-restart-apps\baseline-cacheshell.log
+[GrpcStress] suite=stackexchange, method=cacheshell, target=http://127.0.0.1:50052, total=5000, concurrency=100
+[GrpcStress] Completed
+[GrpcStress] Overall Success=5000, Failed=0, Duration=1641ms, QPS=3046.21
+[GrpcStress] Overall Latency(ms): p50=28.61, p95=46.48, p99=133.86, max=183.31
+[GrpcStress:cacheshell] Success=5000, Failed=0, p95=46.48ms, p99=133.86ms
+
+=== Phase: baseline-slot (stackexchange) ===
+dotnet run --project CsredisGrpcStressTests -- --suite stackexchange --target http://127.0.0.1:50052 --method slot --total 5000 --concurrency 100 --key-prefix grpc:phased:stackexchange:baseline-slot:real-all-restart-apps --pipeline-key-count 3 --expiry-seconds 300
+Log: artifacts\chaos-compare\run-real-all-restart-apps\scale-in\stackexchange\run-real-all-restart-apps\baseline-slot.log
+[GrpcStress] suite=stackexchange, method=slot, target=http://127.0.0.1:50052, total=5000, concurrency=100
+[GrpcStress] Completed
+[GrpcStress] Overall Success=5000, Failed=0, Duration=546ms, QPS=9158.00
+[GrpcStress] Overall Latency(ms): p50=6.95, p95=13.52, p99=127.39, max=175.18
+[GrpcStress:slot] Success=5000, Failed=0, p95=13.52ms, p99=127.39ms
+
+=== Phase: baseline-node (stackexchange) ===
+dotnet run --project CsredisGrpcStressTests -- --suite stackexchange --target http://127.0.0.1:50052 --method node --total 500 --concurrency 25 --key-prefix grpc:phased:stackexchange:baseline-node:real-all-restart-apps --pipeline-key-count 3 --expiry-seconds 300
+Log: artifacts\chaos-compare\run-real-all-restart-apps\scale-in\stackexchange\run-real-all-restart-apps\baseline-node.log
+[GrpcStress] suite=stackexchange, method=node, target=http://127.0.0.1:50052, total=500, concurrency=25
+[GrpcStress] Completed
+[GrpcStress] Overall Success=500, Failed=0, Duration=5855ms, QPS=85.40
+[GrpcStress] Overall Latency(ms): p50=237.94, p95=754.03, p99=1045.12, max=1127.05
+[GrpcStress:node] Success=500, Failed=0, p95=754.03ms, p99=1045.12ms
+
+=== Phase: mixed (stackexchange) ===
+dotnet run --project CsredisGrpcStressTests -- --suite stackexchange --target http://127.0.0.1:50052 --method all --total 20000 --concurrency 200 --key-prefix grpc:phased:stackexchange:mixed:real-all-restart-apps --pipeline-key-count 3 --expiry-seconds 300
+Log: artifacts\chaos-compare\run-real-all-restart-apps\scale-in\stackexchange\run-real-all-restart-apps\mixed.log
+[GrpcStress] suite=stackexchange, method=all, target=http://127.0.0.1:50052, total=20000, concurrency=200
+[GrpcStress] Completed
+[GrpcStress] Overall Success=19959, Failed=41, Duration=85680ms, QPS=233.43
+[GrpcStress] Overall Latency(ms): p50=142.45, p95=1692.46, p99=10303.13, max=48300.06
+[GrpcStress:cacheshell] Success=3976, Failed=24, p95=1006.27ms, p99=1883.15ms
+[GrpcStress:get] Success=3992, Failed=8, p95=351.18ms, p99=566.17ms
+[GrpcStress:node] Success=4000, Failed=0, p95=5546.34ms, p99=46210.96ms
+[GrpcStress:pipeline] Success=3991, Failed=9, p95=450.88ms, p99=748.94ms
+[GrpcStress:slot] Success=4000, Failed=0, p95=232.20ms, p99=422.92ms
+
+=== Phased Stress Summary (stackexchange) ===
+Summary CSV: artifacts\chaos-compare\run-real-all-restart-apps\scale-in\stackexchange\run-real-all-restart-apps\summary.csv

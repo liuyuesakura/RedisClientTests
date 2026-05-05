@@ -1,0 +1,3 @@
+﻿"Scenario","Suite","Runs","PassCount","FailCount","AvgSuccessRate","AvgMixedQps","AvgMixedP95","AvgMixedP99","AvgWorstMethodP95Ratio","TopFailureClass"
+"failover","csredis","1","0","1","88.9","14.56","10030.04","15122.12","82.82","timeout_dominant"
+"failover","stackexchange","1","0","1","95.73","10.6","18542.44","18630.02","201.91","timeout_dominant"
