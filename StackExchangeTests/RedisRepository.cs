@@ -27,6 +27,12 @@ public sealed class RedisRepository
         return value.HasValue ? value.ToString() : null;
     }
 
+    public async Task<string?> GetStringAsync(string key)
+    {
+        var value = await _databaseFactory().StringGetAsync(key);
+        return value.HasValue ? value.ToString() : null;
+    }
+
     public bool Set(string key, byte[] value, TimeSpan? expiry = null) =>
         expiry.HasValue
             ? _databaseFactory().StringSet(key, value, expiry.Value)
@@ -83,10 +89,32 @@ public sealed class RedisRepository
 
     public bool Set<T>(string key, T value, TimeSpan? expiry = null)
     {
+        if (value is string stringValue)
+        {
+            return expiry.HasValue
+                ? _databaseFactory().StringSet(key, stringValue, expiry.Value)
+                : _databaseFactory().StringSet(key, stringValue);
+        }
+
         var json = JsonSerializer.Serialize(value, JsonOptions);
         return expiry.HasValue
             ? _databaseFactory().StringSet(key, json, expiry.Value)
             : _databaseFactory().StringSet(key, json);
+    }
+
+    public Task<bool> SetAsync<T>(string key, T value, TimeSpan? expiry = null)
+    {
+        if (value is string stringValue)
+        {
+            return expiry.HasValue
+                ? _databaseFactory().StringSetAsync(key, stringValue, expiry.Value)
+                : _databaseFactory().StringSetAsync(key, stringValue);
+        }
+
+        var json = JsonSerializer.Serialize(value, JsonOptions);
+        return expiry.HasValue
+            ? _databaseFactory().StringSetAsync(key, json, expiry.Value)
+            : _databaseFactory().StringSetAsync(key, json);
     }
 
     public T? Get<T>(string key)
@@ -97,11 +125,61 @@ public sealed class RedisRepository
             return default;
         }
 
+        if (typeof(T) == typeof(string))
+        {
+            var raw = value.ToString();
+            if (raw.Length > 1 && raw[0] == '"' && raw[^1] == '"')
+            {
+                try
+                {
+                    return (T?)(object?)JsonSerializer.Deserialize<string>(raw, JsonOptions);
+                }
+                catch
+                {
+                    // Old/new format compatibility path: fallback to raw text.
+                }
+            }
+
+            return (T?)(object?)raw;
+        }
+
+        return JsonSerializer.Deserialize<T>(value!, JsonOptions);
+    }
+
+    public async Task<T?> GetAsync<T>(string key)
+    {
+        var value = await _databaseFactory().StringGetAsync(key);
+        if (!value.HasValue)
+        {
+            return default;
+        }
+
+        if (typeof(T) == typeof(string))
+        {
+            var raw = value.ToString();
+            if (raw.Length > 1 && raw[0] == '"' && raw[^1] == '"')
+            {
+                try
+                {
+                    return (T?)(object?)JsonSerializer.Deserialize<string>(raw, JsonOptions);
+                }
+                catch
+                {
+                    // Old/new format compatibility path: fallback to raw text.
+                }
+            }
+
+            return (T?)(object?)raw;
+        }
+
         return JsonSerializer.Deserialize<T>(value!, JsonOptions);
     }
 
     public bool Expire(string key, TimeSpan expiry) =>
         _databaseFactory().KeyExpire(key, expiry);
+
+    public Task<bool> ExpireAsync(string key, TimeSpan expiry) =>
+        _databaseFactory().KeyExpireAsync(key, expiry);
 
     public bool HSet(string key, string field, string value) =>
         _databaseFactory().HashSet(key, field, value);
@@ -162,8 +240,24 @@ public sealed class RedisRepository
 
     public bool HSet<T>(string key, string field, T value)
     {
+        if (value is string stringValue)
+        {
+            return _databaseFactory().HashSet(key, field, stringValue);
+        }
+
         var json = JsonSerializer.Serialize(value, JsonOptions);
         return _databaseFactory().HashSet(key, field, json);
+    }
+
+    public Task<bool> HSetAsync<T>(string key, string field, T value)
+    {
+        if (value is string stringValue)
+        {
+            return _databaseFactory().HashSetAsync(key, field, stringValue);
+        }
+
+        var json = JsonSerializer.Serialize(value, JsonOptions);
+        return _databaseFactory().HashSetAsync(key, field, json);
     }
 
     public T? HGet<T>(string key, string field)
@@ -172,6 +266,53 @@ public sealed class RedisRepository
         if (!value.HasValue)
         {
             return default;
+        }
+
+        if (typeof(T) == typeof(string))
+        {
+            var raw = value.ToString();
+            if (raw.Length > 1 && raw[0] == '"' && raw[^1] == '"')
+            {
+                try
+                {
+                    return (T?)(object?)JsonSerializer.Deserialize<string>(raw, JsonOptions);
+                }
+                catch
+                {
+                    // Old/new format compatibility path: fallback to raw text.
+                }
+            }
+
+            return (T?)(object?)raw;
+        }
+
+        return JsonSerializer.Deserialize<T>(value!, JsonOptions);
+    }
+
+    public async Task<T?> HGetAsync<T>(string key, string field)
+    {
+        var value = await _databaseFactory().HashGetAsync(key, field);
+        if (!value.HasValue)
+        {
+            return default;
+        }
+
+        if (typeof(T) == typeof(string))
+        {
+            var raw = value.ToString();
+            if (raw.Length > 1 && raw[0] == '"' && raw[^1] == '"')
+            {
+                try
+                {
+                    return (T?)(object?)JsonSerializer.Deserialize<string>(raw, JsonOptions);
+                }
+                catch
+                {
+                    // Old/new format compatibility path: fallback to raw text.
+                }
+            }
+
+            return (T?)(object?)raw;
         }
 
         return JsonSerializer.Deserialize<T>(value!, JsonOptions);

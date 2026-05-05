@@ -2,6 +2,8 @@ using StackExchange.Redis;
 
 public sealed class CacheShell
 {
+    private static readonly TimeSpan DefaultRetryBaseDelay = TimeSpan.FromMilliseconds(20);
+    private static readonly TimeSpan MaxRetryDelay = TimeSpan.FromMilliseconds(200);
     private readonly RedisRepository _repository;
     private readonly RedisConnectionPool _pool;
     private readonly Action<string>? _logger;
@@ -21,7 +23,7 @@ public sealed class CacheShell
         int retryCount = 10,
         TimeSpan? retryDelay = null)
     {
-        var cached = _repository.Get<T>(key);
+        var cached = await _repository.GetAsync<T>(key);
         if (cached is not null)
         {
             return cached;
@@ -29,13 +31,13 @@ public sealed class CacheShell
 
         var lockKey = $"{key}:lock";
         var lockToken = Guid.NewGuid().ToString("N");
-        var lockOk = TryAcquireLock(lockKey, lockToken, lockExpiry ?? TimeSpan.FromSeconds(5));
+        var lockOk = await TryAcquireLockAsync(lockKey, lockToken, lockExpiry ?? TimeSpan.FromSeconds(5));
 
         if (lockOk)
         {
             try
             {
-                var secondRead = _repository.Get<T>(key);
+                var secondRead = await _repository.GetAsync<T>(key);
                 if (secondRead is not null)
                 {
                     return secondRead;
@@ -44,22 +46,22 @@ public sealed class CacheShell
                 var data = await dataFactory();
                 if (data is not null)
                 {
-                    _repository.Set(key, data, expiry);
+                    await _repository.SetAsync(key, data, expiry);
                 }
 
                 return data;
             }
             finally
             {
-                ReleaseLock(lockKey, lockToken);
+                await ReleaseLockAsync(lockKey, lockToken);
             }
         }
 
-        var delay = retryDelay ?? TimeSpan.FromMilliseconds(50);
+        var baseDelay = retryDelay ?? DefaultRetryBaseDelay;
         for (var i = 0; i < retryCount; i++)
         {
-            await Task.Delay(delay);
-            var retried = _repository.Get<T>(key);
+            await Task.Delay(ComputeRetryDelay(baseDelay, i));
+            var retried = await _repository.GetAsync<T>(key);
             if (retried is not null)
             {
                 return retried;
@@ -79,7 +81,7 @@ public sealed class CacheShell
         int retryCount = 10,
         TimeSpan? retryDelay = null)
     {
-        var cached = _repository.HGet<T>(key, field);
+        var cached = await _repository.HGetAsync<T>(key, field);
         if (cached is not null)
         {
             return cached;
@@ -87,13 +89,13 @@ public sealed class CacheShell
 
         var lockKey = $"{key}:{field}:lock";
         var lockToken = Guid.NewGuid().ToString("N");
-        var lockOk = TryAcquireLock(lockKey, lockToken, lockExpiry ?? TimeSpan.FromSeconds(5));
+        var lockOk = await TryAcquireLockAsync(lockKey, lockToken, lockExpiry ?? TimeSpan.FromSeconds(5));
 
         if (lockOk)
         {
             try
             {
-                var secondRead = _repository.HGet<T>(key, field);
+                var secondRead = await _repository.HGetAsync<T>(key, field);
                 if (secondRead is not null)
                 {
                     return secondRead;
@@ -102,23 +104,23 @@ public sealed class CacheShell
                 var data = await dataFactory();
                 if (data is not null)
                 {
-                    _repository.HSet(key, field, data);
-                    _repository.Expire(key, expiry);
+                    await _repository.HSetAsync(key, field, data);
+                    await _repository.ExpireAsync(key, expiry);
                 }
 
                 return data;
             }
             finally
             {
-                ReleaseLock(lockKey, lockToken);
+                await ReleaseLockAsync(lockKey, lockToken);
             }
         }
 
-        var delay = retryDelay ?? TimeSpan.FromMilliseconds(50);
+        var baseDelay = retryDelay ?? DefaultRetryBaseDelay;
         for (var i = 0; i < retryCount; i++)
         {
-            await Task.Delay(delay);
-            var retried = _repository.HGet<T>(key, field);
+            await Task.Delay(ComputeRetryDelay(baseDelay, i));
+            var retried = await _repository.HGetAsync<T>(key, field);
             if (retried is not null)
             {
                 return retried;
@@ -129,13 +131,13 @@ public sealed class CacheShell
         return await dataFactory();
     }
 
-    private bool TryAcquireLock(string lockKey, string lockToken, TimeSpan lockExpiry)
+    private async Task<bool> TryAcquireLockAsync(string lockKey, string lockToken, TimeSpan lockExpiry)
     {
         var db = _pool.GetDatabase();
-        return db.StringSet(lockKey, lockToken, lockExpiry, When.NotExists);
+        return await db.StringSetAsync(lockKey, lockToken, lockExpiry, When.NotExists);
     }
 
-    private void ReleaseLock(string lockKey, string lockToken)
+    private async Task ReleaseLockAsync(string lockKey, string lockToken)
     {
         const string releaseScript = """
                                      if redis.call('GET', KEYS[1]) == ARGV[1] then
@@ -144,6 +146,14 @@ public sealed class CacheShell
                                      return 0
                                      """;
         var db = _pool.GetDatabase();
-        _ = db.ScriptEvaluate(releaseScript, [lockKey], [lockToken]);
+        await db.ScriptEvaluateAsync(releaseScript, [lockKey], [lockToken]);
+    }
+
+    private static TimeSpan ComputeRetryDelay(TimeSpan baseDelay, int attempt)
+    {
+        var expFactor = 1 << Math.Min(attempt, 3);
+        var delayMs = Math.Min(baseDelay.TotalMilliseconds * expFactor, MaxRetryDelay.TotalMilliseconds);
+        var jitterMs = Random.Shared.NextDouble() * 15;
+        return TimeSpan.FromMilliseconds(delayMs + jitterMs);
     }
 }

@@ -5,9 +5,12 @@ using StackExchangeTests.Grpc;
 
 public sealed class StackExchangeRedisTestGrpcService : RedisGetTest.RedisGetTestBase
 {
+    private static readonly TimeSpan NodeInfoCacheTtl = TimeSpan.FromSeconds(10);
     private readonly RedisRepository _repository;
     private readonly CacheShell _cacheShell;
     private readonly StackExchangeGrpcRuntimeOptions _runtimeOptions;
+    private readonly SemaphoreSlim _nodeInfoRefreshLock = new(1, 1);
+    private volatile CachedNodeInfos? _nodeInfosCache;
 
     public StackExchangeRedisTestGrpcService(
         RedisRepository repository,
@@ -19,20 +22,20 @@ public sealed class StackExchangeRedisTestGrpcService : RedisGetTest.RedisGetTes
         _runtimeOptions = runtimeOptions;
     }
 
-    public override Task<TriggerGetReply> TriggerGet(TriggerGetRequest request, ServerCallContext context)
+    public override async Task<TriggerGetReply> TriggerGet(TriggerGetRequest request, ServerCallContext context)
     {
         if (string.IsNullOrWhiteSpace(request.Key))
         {
             throw new RpcException(new Status(StatusCode.InvalidArgument, "key is required"));
         }
 
-        var value = _repository.GetString(request.Key);
-        return Task.FromResult(new TriggerGetReply
+        var value = await _repository.GetStringAsync(request.Key);
+        return new TriggerGetReply
         {
             Found = !string.IsNullOrEmpty(value),
             Value = value ?? string.Empty,
             Message = value is null ? "nil" : "ok"
-        });
+        };
     }
 
     public override async Task<TriggerPipelineReply> TriggerPipeline(TriggerPipelineRequest request, ServerCallContext context)
@@ -164,14 +167,45 @@ public sealed class StackExchangeRedisTestGrpcService : RedisGetTest.RedisGetTes
 
     public override async Task<GetNodeInfosReply> GetNodeInfos(GetNodeInfosRequest request, ServerCallContext context)
     {
-        var infos = await CollectNodeInfosAsync(_runtimeOptions);
-        var reply = new GetNodeInfosReply
+        var cache = _nodeInfosCache;
+        var now = DateTimeOffset.UtcNow;
+        if (cache is not null && cache.ExpiresAt > now)
         {
-            Message = infos.Count == 0 ? "no node info found" : $"nodes={infos.Count}"
-        };
+            return BuildNodeInfosReply(cache.Infos, cache.Message);
+        }
 
-        reply.Infos.AddRange(infos);
-        return reply;
+        // Node topology is diagnostic data: stale-while-revalidate avoids request pile-up during refresh.
+        if (cache is not null)
+        {
+            var lockTaken = await _nodeInfoRefreshLock.WaitAsync(0, context.CancellationToken);
+            if (!lockTaken)
+            {
+                return BuildNodeInfosReply(cache.Infos, $"{cache.Message} (stale)");
+            }
+        }
+        else
+        {
+            await _nodeInfoRefreshLock.WaitAsync(context.CancellationToken);
+        }
+
+        try
+        {
+            cache = _nodeInfosCache;
+            now = DateTimeOffset.UtcNow;
+            if (cache is not null && cache.ExpiresAt > now)
+            {
+                return BuildNodeInfosReply(cache.Infos, cache.Message);
+            }
+
+            var infos = await CollectNodeInfosAsync(_runtimeOptions);
+            var message = infos.Count == 0 ? "no node info found" : $"nodes={infos.Count}";
+            _nodeInfosCache = new CachedNodeInfos(DateTimeOffset.UtcNow.Add(NodeInfoCacheTtl), infos, message);
+            return BuildNodeInfosReply(infos, message);
+        }
+        finally
+        {
+            _nodeInfoRefreshLock.Release();
+        }
     }
 
     private static Dictionary<string, RedisValue> BuildPipelineValues(
@@ -543,4 +577,26 @@ public sealed class StackExchangeRedisTestGrpcService : RedisGetTest.RedisGetTes
 
         return key;
     }
+
+    private static GetNodeInfosReply BuildNodeInfosReply(IReadOnlyCollection<NodeInfo> infos, string message)
+    {
+        var reply = new GetNodeInfosReply
+        {
+            Message = message
+        };
+        reply.Infos.AddRange(infos.Select(CloneNodeInfo));
+        return reply;
+    }
+
+    private static NodeInfo CloneNodeInfo(NodeInfo value) =>
+        new()
+        {
+            Endpoint = value.Endpoint,
+            Reachable = value.Reachable,
+            Role = value.Role,
+            Slots = value.Slots,
+            Message = value.Message
+        };
+
+    private sealed record CachedNodeInfos(DateTimeOffset ExpiresAt, List<NodeInfo> Infos, string Message);
 }

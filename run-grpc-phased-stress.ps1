@@ -1,5 +1,7 @@
 $ErrorActionPreference = "Stop"
 Set-StrictMode -Version Latest
+# Prevent native-command stderr lines from being promoted to terminating errors.
+$PSNativeCommandUseErrorActionPreference = $false
 
 $opts = @{
     Suite = "csredis"

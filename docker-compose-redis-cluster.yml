@@ -257,6 +257,8 @@ services:
         condition: service_completed_successfully
     working_dir: /app
     command: ["dotnet", "StackExchangeTests.dll"]
+    ports:
+      - "50052:50052"
     networks:
       - redis-cluster-net
 
