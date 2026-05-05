@@ -263,3 +263,30 @@ Run only direct StackExchange phased:
 Dry run:
 
 `powershell -ExecutionPolicy Bypass -File .\run-all-phased-stress.ps1 -Mode both -DryRun`
+
+## chaos compare (cluster topology changes)
+
+Compare `csredis` vs `stackexchange` under:
+- failover
+- node-down
+- scale-in window
+
+Run all scenarios:
+
+`powershell -ExecutionPolicy Bypass -File .\run-chaos-compare.ps1 -Scenario all -Suite both`
+
+With readiness gate and timeline tracing (defaults enabled):
+
+`powershell -ExecutionPolicy Bypass -File .\run-chaos-compare.ps1 -Scenario all -Suite both -ReadyTimeoutSeconds 120 -ReadyProbeIntervalSeconds 5`
+
+Dry run:
+
+`powershell -ExecutionPolicy Bypass -File .\run-chaos-compare.ps1 -Scenario all -Suite both -DryRun`
+
+Detailed runbook:
+
+`CHAOS-TEST-RUNBOOK.md`
+
+Analyze chaos results:
+
+`powershell -ExecutionPolicy Bypass -File .\run-chaos-analyze.ps1 -RunId <runId>`
