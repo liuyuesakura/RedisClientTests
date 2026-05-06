@@ -1,3 +1,0 @@
-﻿"Iteration","Scenario","Suite","Success","Failed","SuccessRate","MixedQps","MixedP95","MixedP99","WorstMethodP95Ratio","Verdict","FailureClass","FailureReason"
-"1","failover","csredis","294","16","94.84","275.31","148.83","157.54","1.26","FAIL","mixed_or_unknown","no_single_dominant_pattern"
-"1","failover","stackexchange","299","11","96.45","214.33","149.34","164.37","1.06","FAIL","mixed_or_unknown","no_single_dominant_pattern"

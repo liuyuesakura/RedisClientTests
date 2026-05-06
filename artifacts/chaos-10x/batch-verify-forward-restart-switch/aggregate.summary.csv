@@ -1,3 +1,0 @@
-﻿"Scenario","Suite","Runs","PassCount","FailCount","AvgSuccessRate","AvgMixedQps","AvgMixedP95","AvgMixedP99","AvgWorstMethodP95Ratio","TopFailureClass"
-"failover","csredis","1","0","1","94.84","275.31","148.83","157.54","1.26","mixed_or_unknown"
-"failover","stackexchange","1","0","1","96.45","214.33","149.34","164.37","1.06","mixed_or_unknown"

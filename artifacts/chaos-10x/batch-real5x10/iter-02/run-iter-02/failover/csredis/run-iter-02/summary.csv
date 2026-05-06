@@ -1,8 +1,0 @@
-﻿"Suite","Phase","Method","Total","Concurrency","Log","Qps","P95","P99","Success","Failed","Status"
-"csredis","warmup","all","500","10","artifacts\chaos-10x\batch-real5x10\iter-02\run-iter-02\failover\csredis\run-iter-02\warmup.log","163.23","224.38","291.05","500","0","OK"
-"csredis","baseline-get","get","2000","40","artifacts\chaos-10x\batch-real5x10\iter-02\run-iter-02\failover\csredis\run-iter-02\baseline-get.log","2215.26","29.53","182.62","2000","0","OK"
-"csredis","baseline-pipeline","pipeline","2000","40","artifacts\chaos-10x\batch-real5x10\iter-02\run-iter-02\failover\csredis\run-iter-02\baseline-pipeline.log","117.70","2744.61","6938.21","123","1877","OK"
-"csredis","baseline-cacheshell","cacheshell","2000","40","artifacts\chaos-10x\batch-real5x10\iter-02\run-iter-02\failover\csredis\run-iter-02\baseline-cacheshell.log","936.97","1.07","2067.32","0","2000","OK"
-"csredis","baseline-slot","slot","2000","40","artifacts\chaos-10x\batch-real5x10\iter-02\run-iter-02\failover\csredis\run-iter-02\baseline-slot.log","923.10","2.11","2092.11","0","2000","OK"
-"csredis","baseline-node","node","200","10","artifacts\chaos-10x\batch-real5x10\iter-02\run-iter-02\failover\csredis\run-iter-02\baseline-node.log","94.94","1.08","2097.44","0","200","OK"
-"csredis","mixed","all","8000","80","artifacts\chaos-10x\batch-real5x10\iter-02\run-iter-02\failover\csredis\run-iter-02\mixed.log","3480.19","1.29","29.40","0","8000","OK"

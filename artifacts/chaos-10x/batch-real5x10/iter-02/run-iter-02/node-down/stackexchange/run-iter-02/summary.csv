@@ -1,8 +1,0 @@
-﻿"Suite","Phase","Method","Total","Concurrency","Log","Qps","P95","P99","Success","Failed","Status"
-"stackexchange","warmup","all","500","10","artifacts\chaos-10x\batch-real5x10\iter-02\run-iter-02\node-down\stackexchange\run-iter-02\warmup.log","414.29","90.65","147.48","392","108","OK"
-"stackexchange","baseline-get","get","2000","40","artifacts\chaos-10x\batch-real5x10\iter-02\run-iter-02\node-down\stackexchange\run-iter-02\baseline-get.log","2824.00","19.38","132.75","2000","0","OK"
-"stackexchange","baseline-pipeline","pipeline","2000","40","artifacts\chaos-10x\batch-real5x10\iter-02\run-iter-02\node-down\stackexchange\run-iter-02\baseline-pipeline.log","2660.13","20.79","138.06","1842","158","OK"
-"stackexchange","baseline-cacheshell","cacheshell","2000","40","artifacts\chaos-10x\batch-real5x10\iter-02\run-iter-02\node-down\stackexchange\run-iter-02\baseline-cacheshell.log","2548.11","21.90","115.45","0","2000","OK"
-"stackexchange","baseline-slot","slot","2000","40","artifacts\chaos-10x\batch-real5x10\iter-02\run-iter-02\node-down\stackexchange\run-iter-02\baseline-slot.log","5691.21","8.15","123.75","2000","0","OK"
-"stackexchange","baseline-node","node","200","10","artifacts\chaos-10x\batch-real5x10\iter-02\run-iter-02\node-down\stackexchange\run-iter-02\baseline-node.log","14.65","6018.39","7224.05","200","0","OK"
-"stackexchange","mixed","all","8000","80","artifacts\chaos-10x\batch-real5x10\iter-02\run-iter-02\node-down\stackexchange\run-iter-02\mixed.log","500.79","660.24","1116.04","6554","1446","OK"

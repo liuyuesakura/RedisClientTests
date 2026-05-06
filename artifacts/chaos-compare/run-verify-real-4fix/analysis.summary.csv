@@ -1,3 +1,0 @@
-﻿"Scenario","Suite","Success","Failed","SuccessRate","MixedQps","MixedP95","MixedP99","WorstMethodP95Ratio","PassSuccessRate","PassP95Ratio","Verdict","FailureClass","FailureReason"
-"node-down","csredis","640","0","100","12.76","9503.04","13055.96","53.89","True","False","FAIL","mixed_or_unknown","no_single_dominant_pattern"
-"node-down","stackexchange","640","0","100","227.12","452.27","493.18","1.73","True","True","PASS","mixed_or_unknown","no_single_dominant_pattern"

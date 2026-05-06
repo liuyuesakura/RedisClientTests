@@ -1,3 +1,0 @@
-﻿"Scenario","Suite","Phase","Method","Total","Concurrency","Qps","P95","P99","Success","Failed","Status","Log","FailureClass","FailureReason"
-"node-down","csredis","dryrun","all","","","","","","","","DRYRUN","artifacts\chaos-compare\run-verify-dryrun-4fix-b\node-down\csredis\csredis.console.log","transport_connectivity","warmup_and_core_baselines_all_zero_success"
-"node-down","stackexchange","dryrun","all","","","","","","","","DRYRUN","artifacts\chaos-compare\run-verify-dryrun-4fix-b\node-down\stackexchange\stackexchange.console.log","transport_connectivity","warmup_and_core_baselines_all_zero_success"

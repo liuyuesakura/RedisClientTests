@@ -108,10 +108,14 @@ function Invoke-Phase([string]$suite, [string]$target, [hashtable]$phase, [strin
             Success = ""
             Failed = ""
             Status = "DRYRUN"
+            PhaseStartUtc = ""
+            PhaseEndUtc = ""
         }
     }
 
+    $phaseStartUtc = [DateTime]::UtcNow
     $output = & dotnet @cmd 2>&1
+    $phaseEndUtc = [DateTime]::UtcNow
     $output | Tee-Object -FilePath $logPath | Out-Host
     if ($LASTEXITCODE -ne 0) {
         throw "Phase '$phaseName' failed. ExitCode=$LASTEXITCODE"
@@ -147,6 +151,8 @@ function Invoke-Phase([string]$suite, [string]$target, [hashtable]$phase, [strin
         Success = $success
         Failed = $failed
         Status = "OK"
+        PhaseStartUtc = $phaseStartUtc.ToString("o")
+        PhaseEndUtc = $phaseEndUtc.ToString("o")
     }
 }
 
