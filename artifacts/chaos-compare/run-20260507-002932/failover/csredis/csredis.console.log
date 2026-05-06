@@ -1,0 +1,78 @@
+RunId: 20260507-002932
+Suite: csredis
+Target: http://127.0.0.1:50051
+Output: artifacts\chaos-compare\run-20260507-002932\failover\csredis\run-20260507-002932
+
+=== Phase: warmup (csredis) ===
+dotnet run --project CsredisGrpcStressTests -- --suite csredis --target http://127.0.0.1:50051 --method all --total 500 --concurrency 20 --key-prefix grpc:phased:csredis:warmup:20260507-002932 --pipeline-key-count 3 --expiry-seconds 300
+Log: artifacts\chaos-compare\run-20260507-002932\failover\csredis\run-20260507-002932\warmup.log
+[GrpcStress] suite=csredis, method=all, target=http://127.0.0.1:50051, total=500, concurrency=20
+[GrpcStress] Completed
+[GrpcStress] Overall Success=488, Failed=12, Duration=64360ms, QPS=7.77
+[GrpcStress] Overall Latency(ms): p50=4.09, p95=7614.53, p99=42588.44, max=44428.90
+[GrpcStress:cacheshell] Success=96, Failed=4, p95=53.48ms, p99=42588.44ms
+[GrpcStress:get] Success=96, Failed=4, p95=46.73ms, p99=42588.41ms
+[GrpcStress:node] Success=100, Failed=0, p95=7614.53ms, p99=42582.67ms
+[GrpcStress:pipeline] Success=96, Failed=4, p95=33.80ms, p99=44428.51ms
+[GrpcStress:slot] Success=100, Failed=0, p95=36.59ms, p99=33659.47ms
+
+=== Phase: baseline-get (csredis) ===
+dotnet run --project CsredisGrpcStressTests -- --suite csredis --target http://127.0.0.1:50051 --method get --total 5000 --concurrency 100 --key-prefix grpc:phased:csredis:baseline-get:20260507-002932 --pipeline-key-count 3 --expiry-seconds 300
+Log: artifacts\chaos-compare\run-20260507-002932\failover\csredis\run-20260507-002932\baseline-get.log
+[GrpcStress] suite=csredis, method=get, target=http://127.0.0.1:50051, total=5000, concurrency=100
+[GrpcStress] Completed
+[GrpcStress] Overall Success=5000, Failed=0, Duration=1033ms, QPS=4840.21
+[GrpcStress] Overall Latency(ms): p50=16.17, p95=37.12, p99=136.01, max=172.26
+[GrpcStress:get] Success=5000, Failed=0, p95=37.12ms, p99=136.01ms
+
+=== Phase: baseline-pipeline (csredis) ===
+dotnet run --project CsredisGrpcStressTests -- --suite csredis --target http://127.0.0.1:50051 --method pipeline --total 5000 --concurrency 100 --key-prefix grpc:phased:csredis:baseline-pipeline:20260507-002932 --pipeline-key-count 3 --expiry-seconds 300
+Log: artifacts\chaos-compare\run-20260507-002932\failover\csredis\run-20260507-002932\baseline-pipeline.log
+[GrpcStress] suite=csredis, method=pipeline, target=http://127.0.0.1:50051, total=5000, concurrency=100
+[GrpcStress] Completed
+[GrpcStress] Overall Success=5000, Failed=0, Duration=1205ms, QPS=4150.46
+[GrpcStress] Overall Latency(ms): p50=19.25, p95=36.87, p99=130.86, max=176.58
+[GrpcStress:pipeline] Success=5000, Failed=0, p95=36.87ms, p99=130.86ms
+
+=== Phase: baseline-cacheshell (csredis) ===
+dotnet run --project CsredisGrpcStressTests -- --suite csredis --target http://127.0.0.1:50051 --method cacheshell --total 5000 --concurrency 100 --key-prefix grpc:phased:csredis:baseline-cacheshell:20260507-002932 --pipeline-key-count 3 --expiry-seconds 300
+Log: artifacts\chaos-compare\run-20260507-002932\failover\csredis\run-20260507-002932\baseline-cacheshell.log
+[GrpcStress] suite=csredis, method=cacheshell, target=http://127.0.0.1:50051, total=5000, concurrency=100
+[GrpcStress] Completed
+[GrpcStress] Overall Success=5000, Failed=0, Duration=1993ms, QPS=2508.75
+[GrpcStress] Overall Latency(ms): p50=35.36, p95=62.62, p99=131.12, max=171.74
+[GrpcStress:cacheshell] Success=5000, Failed=0, p95=62.62ms, p99=131.12ms
+
+=== Phase: baseline-slot (csredis) ===
+dotnet run --project CsredisGrpcStressTests -- --suite csredis --target http://127.0.0.1:50051 --method slot --total 5000 --concurrency 100 --key-prefix grpc:phased:csredis:baseline-slot:20260507-002932 --pipeline-key-count 3 --expiry-seconds 300
+Log: artifacts\chaos-compare\run-20260507-002932\failover\csredis\run-20260507-002932\baseline-slot.log
+[GrpcStress] suite=csredis, method=slot, target=http://127.0.0.1:50051, total=5000, concurrency=100
+[GrpcStress] Completed
+[GrpcStress] Overall Success=5000, Failed=0, Duration=592ms, QPS=8449.57
+[GrpcStress] Overall Latency(ms): p50=7.61, p95=20.36, p99=115.68, max=158.27
+[GrpcStress:slot] Success=5000, Failed=0, p95=20.36ms, p99=115.68ms
+
+=== Phase: baseline-node (csredis) ===
+dotnet run --project CsredisGrpcStressTests -- --suite csredis --target http://127.0.0.1:50051 --method node --total 500 --concurrency 25 --key-prefix grpc:phased:csredis:baseline-node:20260507-002932 --pipeline-key-count 3 --expiry-seconds 300
+Log: artifacts\chaos-compare\run-20260507-002932\failover\csredis\run-20260507-002932\baseline-node.log
+[GrpcStress] suite=csredis, method=node, target=http://127.0.0.1:50051, total=500, concurrency=25
+[GrpcStress] Completed
+[GrpcStress] Overall Success=500, Failed=0, Duration=87135ms, QPS=5.74
+[GrpcStress] Overall Latency(ms): p50=3886.93, p95=7417.07, p99=8941.25, max=9750.57
+[GrpcStress:node] Success=500, Failed=0, p95=7417.07ms, p99=8941.25ms
+
+=== Phase: mixed (csredis) ===
+dotnet run --project CsredisGrpcStressTests -- --suite csredis --target http://127.0.0.1:50051 --method all --total 20000 --concurrency 200 --key-prefix grpc:phased:csredis:mixed:20260507-002932 --pipeline-key-count 3 --expiry-seconds 300
+Log: artifacts\chaos-compare\run-20260507-002932\failover\csredis\run-20260507-002932\mixed.log
+[GrpcStress] suite=csredis, method=all, target=http://127.0.0.1:50051, total=20000, concurrency=200
+[GrpcStress] Completed
+[GrpcStress] Overall Success=19680, Failed=320, Duration=360609ms, QPS=55.46
+[GrpcStress] Overall Latency(ms): p50=1189.67, p95=16458.42, p99=20556.54, max=49970.12
+[GrpcStress:cacheshell] Success=3919, Failed=81, p95=4256.59ms, p99=17873.69ms
+[GrpcStress:get] Success=3924, Failed=76, p95=4254.91ms, p99=16598.38ms
+[GrpcStress:node] Success=3960, Failed=40, p95=17764.57ms, p99=20556.54ms
+[GrpcStress:pipeline] Success=3917, Failed=83, p95=4256.40ms, p99=18494.94ms
+[GrpcStress:slot] Success=3960, Failed=40, p95=3956.99ms, p99=15090.03ms
+
+=== Phased Stress Summary (csredis) ===
+Summary CSV: artifacts\chaos-compare\run-20260507-002932\failover\csredis\run-20260507-002932\summary.csv
