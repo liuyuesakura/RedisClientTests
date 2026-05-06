@@ -83,28 +83,30 @@ Console.WriteLine($"Redis connected. Endpoint count: {options.EndPoints.Count}."
 Console.WriteLine($"RedisRepository ready with pool size: {poolSize}.");
 Console.WriteLine($"CacheShell ready: {cacheShell.GetType().Name}.");
 Console.WriteLine("Tests will repeat every 15 seconds. Press Ctrl+C to stop.");
+try
+{
+    Console.WriteLine($"--- Test run @ {DateTime.Now:yyyy-MM-dd HH:mm:ss} ---");
+    var anyReachable = await RedisReachableNodesReport.PrintAsync(sentinelEnabled, connectionString, sentinelEndpoints);
+    if (!anyReachable)
+    {
+        Console.WriteLine("[MainLoop] No reachable node in topology probe; skipping Pipeline/CacheShell. Retry in 3s.");
+        // await Task.Delay(TimeSpan.FromSeconds(3));
+        // continue;
+    }
+
+    await RunPipelineTestAsync(repository);
+    await RunCacheShellTestAsync(cacheShell);
+    // await Task.Delay(TimeSpan.FromSeconds(15));
+    // break;
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"[MainLoop] Redis/test error (will retry): {ex.GetType().Name}: {ex.Message}");
+    // await Task.Delay(TimeSpan.FromSeconds(3));
+}
 while (true)
 {
-    try
-    {
-        Console.WriteLine($"--- Test run @ {DateTime.Now:yyyy-MM-dd HH:mm:ss} ---");
-        var anyReachable = await RedisReachableNodesReport.PrintAsync(sentinelEnabled, connectionString, sentinelEndpoints);
-        if (!anyReachable)
-        {
-            Console.WriteLine("[MainLoop] No reachable node in topology probe; skipping Pipeline/CacheShell. Retry in 3s.");
-            await Task.Delay(TimeSpan.FromSeconds(3));
-            continue;
-        }
 
-        await RunPipelineTestAsync(repository);
-        await RunCacheShellTestAsync(cacheShell);
-        await Task.Delay(TimeSpan.FromSeconds(15));
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"[MainLoop] Redis/test error (will retry): {ex.GetType().Name}: {ex.Message}");
-        await Task.Delay(TimeSpan.FromSeconds(3));
-    }
 }
 
 static ConfigurationOptions CreateSentinelRedisOptions(string? serviceName, string[] endpoints)

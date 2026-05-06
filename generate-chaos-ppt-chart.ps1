@@ -1,6 +1,6 @@
 ﻿param(
-    [string]$BatchDir = "artifacts/chaos-10x/batch-real5x10",
-    [string]$OutputFile = "chaos-compare-5x10-detailed-charted.pptx"
+    [string]$BatchDir = "artifacts\chaos-compare\run-20260506-224531",
+    [string]$OutputFile = "chaos-compare-run-20260506-224531-detailed-charted.pptx"
 )
 
 $ErrorActionPreference = "Stop"

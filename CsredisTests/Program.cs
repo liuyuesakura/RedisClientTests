@@ -103,14 +103,17 @@ Console.WriteLine("Redis connected (CSRedis). Sentinel: disabled in code.");
 Console.Out.Flush();
 Console.WriteLine($"RedisRepository ready with pool size: {poolSize}.");
 Console.WriteLine("CacheShell (built-in RedisHelper.CacheShell) ready.");
-Console.WriteLine("Tests will repeat every 15 seconds. Press Ctrl+C to stop.");
+// Console.WriteLine("Tests will repeat every 15 seconds. Press Ctrl+C to stop.");
+Console.WriteLine($"--- Test run @ {DateTime.Now:yyyy-MM-dd HH:mm:ss} ---");
+RedisReachableNodesReport.Print(connectionString!);
+await RunPipelineTestAsync(repository);
+await RunCacheShellTestAsync();
 while (true)
 {
-    Console.WriteLine($"--- Test run @ {DateTime.Now:yyyy-MM-dd HH:mm:ss} ---");
-    RedisReachableNodesReport.Print(connectionString!);
-    await RunPipelineTestAsync(repository);
-    await RunCacheShellTestAsync();
-    await Task.Delay(TimeSpan.FromSeconds(15));
+
+    // await Task.Delay(TimeSpan.FromSeconds(15));
+    
+    // break;
 }
 
 static async Task RunPipelineTestAsync(CsRedisRepository repository)
